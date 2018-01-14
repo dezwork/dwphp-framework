@@ -1,0 +1,59 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @Author: Cleberson Bieleski
+ * @Date:   2017-12-23 04:54:45
+ * @Last Modified by:   Cleberson Bieleski
+ * @Last Modified time: 2017-12-31 11:09:06
+ */
+
+define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework/', '', dirname(__FILE__)));
+echo PATH_ROOT; exit();
+
+
+$command = isset($_GET['command']) ? $_GET['command'] : null;
+if (is_null($command))
+    $command = isset($argv[1]) ? $argv[1] : null;
+    $action = isset($argv[2]) ? $argv[2] : null;
+    $parm_1 = isset($argv[3]) ? $argv[3] : null;
+    $parm_2 = isset($argv[4]) ? $argv[4] : null;
+
+
+try {
+
+    switch ($command) {
+		case 'doctrine':
+			if (copy(PATH_ROOT."/config/bin/doctrine/cli-config.php", PATH_ROOT."/cli-config.php")) {
+				if($action=='create-class'){
+					echo shell_exec("php ".PATH_ROOT."/config/bin/doctrine/generator_class.php");
+				}else {
+					echo shell_exec("./vendor/bin/doctrine $action $parm_1 $parm_2");
+				}
+			}
+			if (file_exists(PATH_ROOT."/cli-config.php")) {
+				unlink(PATH_ROOT."/cli-config.php");
+			}
+		break;
+		case 'composer':
+			if(file_exists(PATH_ROOT."/config/bin/composer/play.php")){
+				require_once PATH_ROOT."/config/bin/composer/play.php";
+			}else{
+				echo "\e[31mErro\e[0m : [CONSOLE] Problema ao executar comando: ".$command."\n";
+			}
+		break;
+		case 'help':
+			echo "\nLista de comandos: \n";
+			echo "\e[1m./dwphp/console composer\e[0m : Instala ou atualiza o composer no framework \n \n";
+			echo "\e[1m./dwphp/console doctrine create-class \e[0m : Gera as classes em php conforme esquema do banco de dados\n";
+			echo "\e[1m./dwphp/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
+		break;
+		default:
+			throw new Exception("\n \033[31m Esse comando ".$command." não existe brother!! \033[0m Tenta um './dwphp help' ;) \n");
+		break;
+	}
+
+	echo "\e[32mProcesso concluido\e[0m\n\n";
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
