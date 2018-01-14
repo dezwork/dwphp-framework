@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-14 10:30:50
+ * @Last Modified time: 2018-01-14 11:21:14
  */
 
 namespace DwPhp;
@@ -676,8 +676,6 @@ class Init{
 
 			}while(!$dir);
 		}
-
-		//echo $directory_view;
 
 		//verifica se existe a view
 		if($helpers==true && file_exists($directory_action) && is_file($directory_action) ){
