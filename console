@@ -26,25 +26,17 @@ try {
 		case 'doctrine':
 			if (copy(PATH_ROOT."/config/bin/doctrine/cli-config.php", PATH_ROOT."/cli-config.php")) {
 				if($action=='create-class'){
-					echo shell_exec("php ".PATH_ROOT."/config/bin/doctrine/generator_class.php");
+					echo exec("php ".PATH_ROOT."/config/bin/doctrine/generator_class.php");
 				}else {
-					echo shell_exec("./vendor/bin/doctrine $action $parm_1 $parm_2");
+					echo exec("./vendor/bin/doctrine $action $parm_1 $parm_2");
 				}
 			}
 			if (file_exists(PATH_ROOT."/cli-config.php")) {
 				unlink(PATH_ROOT."/cli-config.php");
 			}
 		break;
-		case 'composer':
-			if(file_exists(PATH_ROOT."/config/bin/composer/play.php")){
-				require_once PATH_ROOT."/config/bin/composer/play.php";
-			}else{
-				echo "\e[31mErro\e[0m : [CONSOLE] Problema ao executar comando: ".$command."\n";
-			}
-		break;
 		case 'help':
 			echo "\nLista de comandos: \n";
-			echo "\e[1m./dwphp/console composer\e[0m : Instala ou atualiza o composer no framework \n \n";
 			echo "\e[1m./dwphp/console doctrine create-class \e[0m : Gera as classes em php conforme esquema do banco de dados\n";
 			echo "\e[1m./dwphp/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
 		break;

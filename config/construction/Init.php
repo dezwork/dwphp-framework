@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-14 10:30:50
+ * @Last Modified time: 2018-01-15 12:29:18
  */
 
 namespace DwPhp;
@@ -666,7 +666,8 @@ class Init{
 					$dir = true;
 				}else{
 					//echo "<br/>".key($url_array)."<br/>";
-					if(is_int(key($url_array)) == false || key($url_array) != 0){
+
+					if(count($url_array) || is_int(key($url_array)) == false){
 						$directory_ctrl.='/index.php';
 						$directory_view.='/index.php';
 						$this->urlCompletePath.='/';
@@ -677,7 +678,7 @@ class Init{
 			}while(!$dir);
 		}
 
-		//echo $directory_view;
+
 
 		//verifica se existe a view
 		if($helpers==true && file_exists($directory_action) && is_file($directory_action) ){
