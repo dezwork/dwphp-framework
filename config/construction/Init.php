@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-15 12:29:18
+ * @Last Modified time: 2018-01-15 13:19:30
  */
 
 namespace DwPhp;
@@ -677,7 +677,6 @@ class Init{
 
 			}while(!$dir);
 		}
-
 
 
 		//verifica se existe a view
