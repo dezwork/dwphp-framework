@@ -667,7 +667,7 @@ class Init{
 				}else{
 					//echo "<br/>".key($url_array)."<br/>";
 
-					if(count($url_array) || is_int(key($url_array)) == false){
+					if(count($url_array)==0 || is_int(key($url_array)) == false){
 						$directory_ctrl.='/index.php';
 						$directory_view.='/index.php';
 						$this->urlCompletePath.='/';
