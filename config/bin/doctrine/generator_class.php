@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-10 14:07:12
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 2018-01-16 19:21:43
  */
 
 use Symfony\Component\Yaml\Yaml;
@@ -14,8 +14,9 @@ use Symfony\Component\Yaml\Yaml;
 date_default_timezone_set('America/Sao_Paulo');
 
 if(!defined('PATH_ROOT')){
-	define('PATH_ROOT', str_replace('/dwphp/config/bin/doctrine','',dirname(__FILE__)) );
+	define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework/config/bin/doctrine','',dirname(__FILE__)) );
 }
+
 $dir = PATH_ROOT."/app/dev/entity/";
 
 require_once PATH_ROOT."/vendor/autoload.php";
@@ -162,7 +163,7 @@ use DwPhp\Library\models\AbstractObject;\n";
 	    }
 	}
 	if($contador>0){
-		echo "Gerou ".($contador)." novas classes em '".$dir."'\n";
+		echo "\n\nGerou ".($contador)." novas classes em '".$dir."'\n";
 	}else{
 		echo "Nenhuma classe gerada\n";
 	}
