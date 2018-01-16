@@ -8,8 +8,7 @@
  * @Last Modified time: 2017-12-31 11:09:06
  */
 
-define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework/', '', dirname(__FILE__)));
-echo PATH_ROOT; exit();
+define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework', '', dirname(__FILE__)));
 
 
 $command = isset($_GET['command']) ? $_GET['command'] : null;
@@ -24,12 +23,14 @@ try {
 
     switch ($command) {
 		case 'doctrine':
-			if (copy(PATH_ROOT."/config/bin/doctrine/cli-config.php", PATH_ROOT."/cli-config.php")) {
+			if (copy(dirname(__FILE__)."/config/bin/doctrine/cli-config.php", PATH_ROOT."/cli-config.php")) {
 				if($action=='create-class'){
-					echo exec("php ".PATH_ROOT."/config/bin/doctrine/generator_class.php");
+					echo exec("php ".dirname(__FILE__)."/config/bin/doctrine/generator_class.php");
 				}else {
 					echo exec("./vendor/bin/doctrine $action $parm_1 $parm_2");
 				}
+			}else{
+				echo "\n \033[31m cli-config.php não encontrado! \033[0m"; exit();
 			}
 			if (file_exists(PATH_ROOT."/cli-config.php")) {
 				unlink(PATH_ROOT."/cli-config.php");
@@ -45,7 +46,7 @@ try {
 		break;
 	}
 
-	echo "\e[32mProcesso concluido\e[0m\n\n";
+	echo "\n\e[32mProcesso concluido\e[0m\n\n";
 } catch (Exception $e) {
     echo $e->getMessage();
 }

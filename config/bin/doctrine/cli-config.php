@@ -3,15 +3,20 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2017-12-31 11:06:27
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 2018-01-16 19:17:20
  */
 
 if(!defined('PATH_ROOT')){
 	define('PATH_ROOT', dirname(__FILE__) );
 }
 
-require_once PATH_ROOT."/dwphp/config/bin/doctrine/bootstrap.php";
+
+if(file_exists(PATH_ROOT."/vendor/dezwork/dwphp-framework/config/bin/doctrine/bootstrap.php")){
+	require_once PATH_ROOT."/vendor/dezwork/dwphp-framework/config/bin/doctrine/bootstrap.php";
+}else{
+	echo "error on cli-config.php"; exit();
+}
 
 
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($entityManager);
