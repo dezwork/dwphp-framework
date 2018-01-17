@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 2018-01-16 21:03:33
+ * @Last Modified time: 2018-01-16 22:53:30
  */
 
 namespace DwPhp;
@@ -655,17 +655,23 @@ class Init{
 					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
 					next($url_array);
 					$dir = false;
-					if(isset($url_array[key($url_array)+1])){
-						$this->setMethodsURI($url_array[key($url_array)+1]);
+					if(isset($url_array[key($url_array)])){
+						$this->setMethodsURI($url_array[key($url_array)]);
 					}
 				}else if( (file_exists($directory_view) && in_array(current($url_array).'.php', scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array).'.php', scandir($directory_ctrl))) ){
 					$directory_ctrl.='/'.current($url_array).'.php';
 					$directory_view.='/'.current($url_array).'.php';
 					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
 					next($url_array);
+					if(isset($url_array[key($url_array)])){
+						$this->setMethodsURI($url_array[key($url_array)]);
+					}
 					$dir = true;
 				}else{
 					//echo "<br/>".key($url_array)."<br/>";
+					if(isset($url_array[key($url_array)])){
+						$this->setMethodsURI($url_array[key($url_array)]);
+					}
 
 					if(count($url_array)==0 || is_int(key($url_array)) == false){
 						$directory_ctrl.='/index.php';
@@ -677,7 +683,6 @@ class Init{
 
 			}while(!$dir);
 		}
-
 
 		//verifica se existe a view
 		if($helpers==true && file_exists($directory_action) && is_file($directory_action) ){
@@ -775,7 +780,6 @@ class Init{
 					require_once $this->getpageCtrl();
 					if(class_exists('\App\Framework\controller', false)){
 						$this->controller = new \App\Framework\controller($this);
-
 						if($this->getMethodsURI()!=''){
 							if(method_exists($this->controller,$this->getMethodsURI())){
 								$methods_action=$this->getMethodsURI();
