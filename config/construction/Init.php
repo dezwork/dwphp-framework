@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 2018-01-16 22:53:30
+ * @Last Modified by:   Cleberson Bieleski
+ * @Last Modified time: 2018-01-17 15:15:20
  */
 
 namespace DwPhp;
@@ -227,6 +227,21 @@ class Init{
 				if(count($app_config)==0){
 					throw new Exception("Você deve configurar o arquivo app_config.yml");
 				}
+
+				if(!isset($app_config['default']['development']['address_uri']) || strlen($app_config['default']['development']['address_uri'])<5){
+					if(strpos($_SERVER['HTTP_HOST'], 'www')===false){
+						$app_config['default']['development']['address_uri'] = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+						$app_config['default']['development']['use_https'] = 'Off';
+						$app_config['default']['development']['use_www'] = 'Off';
+					}else{
+						$app_config['default']['development']['address_uri'] = str_replace('www.', '',  $_SERVER['HTTP_HOST']).$_SERVER['REQUEST_URI'];
+						$app_config['default']['development']['use_https'] = 'Off';
+						$app_config['default']['development']['use_www'] = 'On';
+					}
+
+					file_put_contents(PATH_ROOT.'/app/app_config.yml', str_replace(array("'On'","'Off'"), array("On","Off"), Yaml::dump($app_config , 5 , 5)));
+				}
+
 			}catch(ParseException $e){
 			    throw new Exception("Não é possível analisar dados app_config.yml : %s ".$e->getMessage());
 			}
@@ -337,9 +352,7 @@ class Init{
 		}
 
 		$db=$this->getDbConfig();
-		if(!isset($db) && empty($db['host']) || empty($db['username']) || empty($db['password']) || empty($db['database'])){
-			throw new Exception("Você deve definir as configurações do banco de dados em db_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
-		}else{
+		if(isset($db) && !empty($db['host']) && empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
 			$GLOBALS['CONN'] = ADONewConnection('mysqli'); # eg. 'mysql','mysqlI' or 'oci8'
 			$GLOBALS['CONN']->Connect($db['host'], $db['username'], $db['password'], $db['database']);
 			$GLOBALS['CONN']->Execute("SET NAMES '".$db['encoding']."'");
