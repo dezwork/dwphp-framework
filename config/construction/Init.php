@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-17 15:15:20
+ * @Last Modified time: 2018-01-17 17:54:08
  */
 
 namespace DwPhp;
@@ -352,7 +352,7 @@ class Init{
 		}
 
 		$db=$this->getDbConfig();
-		if(isset($db) && !empty($db['host']) && empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
+		if(isset($db) && !empty($db['host']) && !empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
 			$GLOBALS['CONN'] = ADONewConnection('mysqli'); # eg. 'mysql','mysqlI' or 'oci8'
 			$GLOBALS['CONN']->Connect($db['host'], $db['username'], $db['password'], $db['database']);
 			$GLOBALS['CONN']->Execute("SET NAMES '".$db['encoding']."'");
