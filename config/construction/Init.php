@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-18 05:29:05
+ * @Last Modified time: 2018-01-18 07:07:59
  */
 
 namespace DwPhp;
@@ -680,7 +680,7 @@ class Init{
 						$this->setMethodsURI($url_array[key($url_array)]);
 					}
 
-					if(count($url_array)==0 || is_int(key($url_array)) == false){
+					if((count($url_array)==0 || is_int(key($url_array)) == false) || (isset($url_array) && $url_array[0]=='')){
 						$directory_ctrl.='/index.php';
 						$directory_view.='/index.php';
 						$this->urlCompletePath.='/';
