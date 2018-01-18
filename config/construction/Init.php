@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-17 15:15:20
+ * @Last Modified time: 2018-01-18 05:00:17
  */
 
 namespace DwPhp;
@@ -260,6 +260,9 @@ class Init{
                     	$dir_path = 'prod';
                     }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
                     	$dir_path = 'dev';
+                    	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
+                    		unlink(file_exists(PATH_ROOT.'/app/dev/'));
+                    	}
                     }
 
                 	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
@@ -352,7 +355,7 @@ class Init{
 		}
 
 		$db=$this->getDbConfig();
-		if(isset($db) && !empty($db['host']) && empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
+		if(isset($db) && !empty($db['host']) && !empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
 			$GLOBALS['CONN'] = ADONewConnection('mysqli'); # eg. 'mysql','mysqlI' or 'oci8'
 			$GLOBALS['CONN']->Connect($db['host'], $db['username'], $db['password'], $db['database']);
 			$GLOBALS['CONN']->Execute("SET NAMES '".$db['encoding']."'");
@@ -375,7 +378,7 @@ class Init{
 
 		//Update path to save sessions
 		if(!file_exists(PATH_ROOT.$this->getSessionSavePath()) || $this->getSessionSavePath()==''){
-			mkdir(PATH_ROOT.$this->getSessionSavePath(), 777, true);
+			mkdir(PATH_ROOT.$this->getSessionSavePath(), 0777, true);
 		}
 		ini_set('session.save_path'	,	PATH_ROOT.$this->getSessionSavePath());
 		ini_set('session.cookie_path'	,	PATH_ROOT.$this->getSessionSavePath());
@@ -541,14 +544,6 @@ class Init{
 	public function getApplicationUseNow(){
 		$tmp=explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
 
-/*
-		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='test' && $this->getEnvironmentStatus()!='production'){
-			throw new Exception("environment_status deve ser definido como development,test ou production.");
-		}
-		*/
-		//	array_shift($tmp);
-		//	array_shift($tmp);
-
 
 		foreach ($tmp as $key => $value) {
 			if(isset($tmp[$key]) && is_array($this->getApplication()) && array_key_exists($tmp[$key],$this->getApplication())){
@@ -681,7 +676,6 @@ class Init{
 					}
 					$dir = true;
 				}else{
-					//echo "<br/>".key($url_array)."<br/>";
 					if(isset($url_array[key($url_array)])){
 						$this->setMethodsURI($url_array[key($url_array)]);
 					}
@@ -716,8 +710,6 @@ class Init{
 			$this->setPageCtrl($this->getPathApplication('controllers/error/','404.php'));
 			$this->setPageView($this->getPathApplication('views/error/','404.php'));
 		}
-
-		//echo "<br/>page: ".$this->getPageView(); exit();
 
 		if($helpers==false){
 			$this->instanceTemplate($this->getPathApplication('views/layout/','template.php'));
