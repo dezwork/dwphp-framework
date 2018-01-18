@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-18 07:07:59
+ * @Last Modified time: 2018-01-18 07:53:07
  */
 
 namespace DwPhp;
@@ -706,8 +706,10 @@ class Init{
 			$this->setPageCtrl($directory_ctrl);
 			$this->setPageView($directory_view);
 		}
-		if(!file_exists($directory_view) || !is_file($directory_view)){
+		if(!file_exists($directory_ctrl) || !is_file($directory_ctrl)){
 			$this->setPageCtrl($this->getPathApplication('controllers/error/','404.php'));
+		}
+		if(!file_exists($directory_view) || !is_file($directory_view)){
 			$this->setPageView($this->getPathApplication('views/error/','404.php'));
 		}
 
