@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-23 22:02:29
+ * @Last Modified time: 2018-01-23 23:05:53
  */
 
 namespace DwPhp\Library;
@@ -26,6 +26,15 @@ namespace DwPhp\Library;
 				$var = $func($var);
 			return $var;
 		}
+
+
+		public static function GET($positoin_post=''){
+			return filter_input(INPUT_GET , $positoin_post);
+		}
+		public static function POST($positoin_post=''){
+			return filter_input(INPUT_POST , $positoin_post);
+		}
+
 
 		public function posURI($num=0){
 			$tmp=explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
