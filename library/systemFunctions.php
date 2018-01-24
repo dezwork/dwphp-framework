@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-10 12:50:34
+ * @Last Modified time: 2018-01-23 22:02:29
  */
 
 namespace DwPhp\Library;
@@ -68,12 +68,22 @@ namespace DwPhp\Library;
 
 		# SISTEMA - TRATAMENTOS DE DADOS #
 		/* HEADER AJAX */
-		public static function headerAjax(){
+		public static function headerJson($objJson=array()){
 			header('Expires: Fri, 14 Mar 1980 20:53:00 GMT');
 			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 			header('Cache-Control: no-cache, must-revalidate');
 			header('Pragma: no-cache');
-			header('Content-type: text/plain; charset=iso-8859-1');
+			header('Content-Type: application/json');
+
+			$a_tmp = array();
+
+			foreach ($objJson as $key => $value) {
+				$a_tmp[] = '"'.$key.'":"'.$value.'"';
+			}
+
+			return json_decode('{'.implode(',',$a_tmp).'}');
+
+
 		}
 
 		public static function OrdemUriForSQL($url){
