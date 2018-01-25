@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-10 12:50:47
+ * @Last Modified time: 2018-01-24 06:18:13
  */
 
 	namespace DwPhp\Library\models;
@@ -149,7 +149,7 @@
 
 
 	    public function setId($id){
-	        $this->id = $id;
+	        $this->id = (int)$id;
 
 	        return $this;
 	    }

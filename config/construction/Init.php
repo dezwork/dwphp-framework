@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-18 07:53:07
+ * @Last Modified time: 2018-01-24 11:57:11
  */
 
 namespace DwPhp;
@@ -87,7 +87,7 @@ class Init{
 	/**
 		Database para desnevolvimento
 	*/
-	private $db_config 			=	array();
+	private $dbConfig 			=	array();
 
 	//controle de arquivos
 	public  $pathURI;
@@ -97,7 +97,10 @@ class Init{
 	public  $ctrlFunction;
 	public  $methodsURI;
 
-	function __construct(){
+	function __construct($type=''){
+		if($type=='test'){
+			return false;
+		}
 		// import variables to configuration of system
 		try {
 			$this->getImportDataConfiguration();
@@ -221,34 +224,7 @@ class Init{
 	// configura applications
 	public function getImportCurrentDataApplication(){
 
-		if(file_exists(PATH_ROOT.'/app/app_config.yml')){
-			try {
-				$app_config = Yaml::parse(file_get_contents(PATH_ROOT.'/app/app_config.yml'));
-				if(count($app_config)==0){
-					throw new Exception("Você deve configurar o arquivo app_config.yml");
-				}
-
-				if(!isset($app_config['default']['development']['address_uri']) || strlen($app_config['default']['development']['address_uri'])<5){
-					if(strpos($_SERVER['HTTP_HOST'], 'www')===false){
-						$app_config['default']['development']['address_uri'] = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-						$app_config['default']['development']['use_https'] = 'Off';
-						$app_config['default']['development']['use_www'] = 'Off';
-					}else{
-						$app_config['default']['development']['address_uri'] = str_replace('www.', '',  $_SERVER['HTTP_HOST']).$_SERVER['REQUEST_URI'];
-						$app_config['default']['development']['use_https'] = 'Off';
-						$app_config['default']['development']['use_www'] = 'On';
-					}
-
-					file_put_contents(PATH_ROOT.'/app/app_config.yml', str_replace(array("'On'","'Off'"), array("On","Off"), Yaml::dump($app_config , 5 , 5)));
-				}
-
-			}catch(ParseException $e){
-			    throw new Exception("Não é possível analisar dados app_config.yml : %s ".$e->getMessage());
-			}
-		}else{
-			throw new Exception("Arquivo de configuração 'app_config.yml' não encontrado em: ".PATH_ROOT.'/app/');
-		}
-
+		$app_config = $this->getAppConfigYaml();
 
 		foreach ($app_config[$this->getApplicationName()] as $key => $value) {
             if(isset($value['address_uri'])){
@@ -335,34 +311,7 @@ class Init{
 			throw new Exception("Você deve definir uma url em address_uri_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
 		}
 
-		//Get address_uri of file app_config.yml
-		if($this->getEnvironmentStatus()=='production'){
-			if(isset($app_config[$this->getNameApplication()]['db_production'])){
-				$this->setDbConfig($app_config[$this->getNameApplication()]['db_production']);
-			}
-		}else if($this->getEnvironmentStatus()=='staging'){
-			if(isset($app_config[$this->getNameApplication()]['db_staging'])){
-				$this->setDbConfig($app_config[$this->getNameApplication()]['db_staging']);
-			}
-		}else if($this->getEnvironmentStatus()=='testing'){
-			if(isset($app_config[$this->getNameApplication()]['db_testing'])){
-				$this->setDbConfig($app_config[$this->getNameApplication()]['db_testing']);
-			}
-		}else if($this->getEnvironmentStatus()=='development'){
-			if(isset($app_config[$this->getNameApplication()]['db_development'])){
-				$this->setDbConfig($app_config[$this->getNameApplication()]['db_development']);
-			}
-		}
-
-		$db=$this->getDbConfig();
-		if(isset($db) && !empty($db['host']) && !empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
-			$GLOBALS['CONN'] = ADONewConnection('mysqli'); # eg. 'mysql','mysqlI' or 'oci8'
-			$GLOBALS['CONN']->Connect($db['host'], $db['username'], $db['password'], $db['database']);
-			$GLOBALS['CONN']->Execute("SET NAMES '".$db['encoding']."'");
-		  	$GLOBALS['CONN']->Execute("SET character_set_connection=".$db['encoding']);
-		  	$GLOBALS['CONN']->Execute("SET character_set_client=".$db['encoding']);
-		  	$GLOBALS['CONN']->Execute("SET character_set_results=".$db['encoding']);
-		}
+		$this->setConnectionDb($app_config);
 
 	}
 
@@ -380,6 +329,7 @@ class Init{
 		if(!file_exists(PATH_ROOT.$this->getSessionSavePath()) || $this->getSessionSavePath()==''){
 			mkdir(PATH_ROOT.$this->getSessionSavePath(), 0777, true);
 		}
+
 		ini_set('session.save_path'	,	PATH_ROOT.$this->getSessionSavePath());
 		ini_set('session.cookie_path'	,	PATH_ROOT.$this->getSessionSavePath());
 
@@ -483,6 +433,71 @@ class Init{
 			throw new Exception("<b>setSystemConfigs()</b> <br/> Você precisa definir a variável 'locale'. Ex. pt_BR para sua localização.");
 		}else{
 			setlocale(LC_CTYPE, $this->getLocale());
+		}
+	}
+
+
+	public function getAppConfigYaml(){
+		if(file_exists(PATH_ROOT.'/app/app_config.yml')){
+			try {
+				$app_config = Yaml::parse(file_get_contents(PATH_ROOT.'/app/app_config.yml'));
+				if(count($app_config)==0){
+					throw new Exception("Você deve configurar o arquivo app_config.yml");
+				}
+
+				if(!isset($app_config['default']['development']['address_uri']) || strlen($app_config['default']['development']['address_uri'])<5){
+					if(strpos($_SERVER['HTTP_HOST'], 'www')===false){
+						$app_config['default']['development']['address_uri'] = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+						$app_config['default']['development']['use_https'] = 'Off';
+						$app_config['default']['development']['use_www'] = 'Off';
+					}else{
+						$app_config['default']['development']['address_uri'] = str_replace('www.', '',  $_SERVER['HTTP_HOST']).$_SERVER['REQUEST_URI'];
+						$app_config['default']['development']['use_https'] = 'Off';
+						$app_config['default']['development']['use_www'] = 'On';
+					}
+
+					file_put_contents(PATH_ROOT.'/app/app_config.yml', str_replace(array("'On'","'Off'"), array("On","Off"), Yaml::dump($app_config , 5 , 5)));
+				}
+			}catch(ParseException $e){
+			    throw new Exception("Não é possível analisar dados app_config.yml : %s ".$e->getMessage());
+			}
+			return $app_config;
+		}else{
+			throw new Exception("Arquivo de configuração 'app_config.yml' não encontrado em: ".PATH_ROOT.'/app/');
+		}
+	}
+
+	public function setConnectionDb($app_config=array()){
+		//Get address_uri of file app_config.yml
+		if($this->getEnvironmentStatus()=='production'){
+			if(isset($app_config[$this->getNameApplication()]['db_production'])){
+				$this->setDbConfig($app_config[$this->getNameApplication()]['db_production']);
+			}
+		}else if($this->getEnvironmentStatus()=='staging'){
+			if(isset($app_config[$this->getNameApplication()]['db_staging'])){
+				$this->setDbConfig($app_config[$this->getNameApplication()]['db_staging']);
+			}
+		}else if($this->getEnvironmentStatus()=='testing'){
+			if(isset($app_config[$this->getNameApplication()]['db_testing'])){
+				$this->setDbConfig($app_config[$this->getNameApplication()]['db_testing']);
+			}
+		}else if($this->getEnvironmentStatus()=='development'){
+			if(isset($app_config[$this->getNameApplication()]['db_development'])){
+				$this->setDbConfig($app_config[$this->getNameApplication()]['db_development']);
+			}
+		}
+
+
+		$db=$this->getDbConfig();
+		if(isset($db) && !empty($db['host']) && !empty($db['username']) && !empty($db['password']) && !empty($db['database'])){
+			$GLOBALS['CONN'] = ADONewConnection('mysqli'); # eg. 'mysql','mysqlI' or 'oci8'
+			$GLOBALS['CONN']->Connect($db['host'], $db['username'], $db['password'], $db['database']);
+			$GLOBALS['CONN']->Execute("SET NAMES '".$db['encoding']."'");
+		  	$GLOBALS['CONN']->Execute("SET character_set_connection=".$db['encoding']);
+		  	$GLOBALS['CONN']->Execute("SET character_set_client=".$db['encoding']);
+		  	$GLOBALS['CONN']->Execute("SET character_set_results=".$db['encoding']);
+		}else{
+			return false;
 		}
 	}
 
