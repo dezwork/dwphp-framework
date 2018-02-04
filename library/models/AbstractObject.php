@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-24 06:18:13
+ * @Last Modified time: 2018-01-31 11:02:44
  */
 
 	namespace DwPhp\Library\models;

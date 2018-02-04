@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 2018-01-16 19:21:43
+ * @Last Modified by:   Cleberson Bieleski
+ * @Last Modified time: 2018-01-27 11:26:44
  */
 
 use Symfony\Component\Yaml\Yaml;
@@ -73,11 +73,9 @@ $cmf->setEntityManager($em);
 $metadata = $cmf->getAllMetadata();
 
 $generator = new \Doctrine\ORM\Tools\EntityGenerator();
-$generator->setGenerateAnnotations(true);
-$generator->setGenerateStubMethods(true);
-$generator->setRegenerateEntityIfExists(true);
 $generator->setUpdateEntityIfExists(true);
-$generator->setBackupExisting(false);
+$generator->setGenerateStubMethods(true);
+$generator->setGenerateAnnotations(true);
 $generator->generate($metadata, $dir);
 
 

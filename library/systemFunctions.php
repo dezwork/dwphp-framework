@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-23 23:05:53
+ * @Last Modified time: 2018-02-04 09:24:05
  */
 
 namespace DwPhp\Library;
@@ -78,11 +78,13 @@ namespace DwPhp\Library;
 		# SISTEMA - TRATAMENTOS DE DADOS #
 		/* HEADER AJAX */
 		public static function headerJson($objJson=array()){
-			header('Expires: Fri, 14 Mar 1980 20:53:00 GMT');
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-			header('Cache-Control: no-cache, must-revalidate');
-			header('Pragma: no-cache');
-			header('Content-Type: application/json');
+			if(strpos($_SERVER['SCRIPT_NAME'], 'phpunit')===false){
+				header('Expires: Fri, 14 Mar 1980 20:53:00 GMT');
+				header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+				header('Cache-Control: no-cache, must-revalidate');
+				header('Pragma: no-cache');
+				header('Content-Type: application/json');
+			}
 
 			$a_tmp = array();
 

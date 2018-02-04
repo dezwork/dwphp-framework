@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-24 11:57:11
+ * @Last Modified time: 2018-01-27 09:39:07
  */
 
 namespace DwPhp;
@@ -584,7 +584,6 @@ class Init{
 		}
 
 		$this->setApplicationName($app_path);
-
 		if(!file_exists(PATH_ROOT.$app_public)){
 			throw new Exception("app_public não foi encontrado em: ".PATH_ROOT.$app_public);
 		}else{
