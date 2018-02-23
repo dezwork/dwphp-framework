@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-13 21:34:38
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 2018-02-22 21:59:34
  */
 
 	namespace DwPhp\Library;
@@ -19,25 +19,11 @@
 			$this->head = new head();
 		}
 
-		public static function compactarHTML($b='',$indent=false,$bolean=false) {
-			if($bolean==false){
-				if($indent==false){
-					return $b;
-				}else{
-					$indenter = new \Gajus\Dindent\Indenter();
-		            /**
-		             * @param string $element_name Element name, e.g. "b".
-		             * @param ELEMENT_TYPE_BLOCK|ELEMENT_TYPE_INLINE $type
-		             * @return null
-		             */
-		            //$indenter->setElementType('pre', \Gajus\Dindent\Indenter::ELEMENT_TYPE_BLOCK);
-		            return $indenter->indent($b);
-				}
-	        }else{
-				//ob_start("compactar");
+		public static function compactarHTML($b='',$bolean=false) {
+			if($bolean==true){
 				$b = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $b);
 				$b = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $b);
-			}
+	        }
 			return $b;
 		}
 
