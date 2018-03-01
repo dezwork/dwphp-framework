@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-27 09:39:07
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 2018-03-01 13:17:24
  */
 
 namespace DwPhp;
@@ -379,7 +379,10 @@ class Init{
 			$difLog = implode('/', $difLog).'/';
 			if(!file_exists($difLog) || $difLog==''){
 				mkdir($difLog, 777, true);
+			}else{
+				chmod($difLog, 777);
 			}
+			chmod(PATH_ROOT.$this->getErrorLog(), 777);
 			$file = fopen(PATH_ROOT.$this->getErrorLog(), "w+") or die("Arquivo de log não pode ser aberto!");
 			$txt = "Created: ".date('d-m-Y H:m:i')."\n";
 			fwrite($file, $txt);
