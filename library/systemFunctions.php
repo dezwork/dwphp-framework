@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-02-04 09:24:05
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 2018-03-06 17:01:31
  */
 
 namespace DwPhp\Library;
@@ -204,7 +204,7 @@ namespace DwPhp\Library;
 		}
 
 		public static function enc($p,$c=false){
-			$d= '´´´';$l=strlen((string)$p);if($l>1){for($i=0;$i<$l;$i++){$a=ord($p[$i]);$p[$i]=chr($a++);}}else{$a=ord($p);$p=chr($a++);}$p=strrev($p);if($l%2!=0){$p.=$d;}$l=strlen($p);$p=substr($p,$l/2,$l).substr($p,0,$l/2);$p=base64_encode($p);if($c){$p=md5($p);}return $p;
+			$d= utf8_decode('´´´');$l=strlen((string)$p);if($l>1){for($i=0;$i<$l;$i++){$a=ord($p[$i]);$p[$i]=chr($a++);}}else{$a=ord($p);$p=chr($a++);}$p=strrev($p);if($l%2!=0){$p.=$d;}$l=strlen($p);$p=substr($p,$l/2,$l).substr($p,0,$l/2);$p=base64_encode($p);if($c){$p=md5($p);}return $p;
 		}
 
 		# HTML - TRATAMENTOS DE DADOS #
