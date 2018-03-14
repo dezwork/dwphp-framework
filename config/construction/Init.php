@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 2018-03-01 13:17:24
+ * @Last Modified time: 2018-03-13 10:14:00
  */
 
 namespace DwPhp;
@@ -104,36 +104,36 @@ class Init{
 		// import variables to configuration of system
 		try {
 			$this->getImportDataConfiguration();
-		}catch(Exception $e){
-			$this->notificationErrors($e->getMessage()); exit;
+		}catch(\Exception $e){
+			$this->notificationErrors('Falha na função getImportDataConfiguration', $e->getMessage()); exit;
 		}
 
 		// Defining configuration of system
 		try {
 			$this->setSystemConfigs();
-		}catch(Exception $e){
-			$this->notificationErrors($e->getMessage()); exit;
+		}catch(\Exception $e){
+			$this->notificationErrors('Falha na função setSystemConfigs', $e->getMessage()); exit;
 		}
 
 		// Defining application path of use
 		try {
 			$this->getApplicationUseNow();
-		}catch(Exception $e){
-			$this->notificationErrors($e->getMessage()); exit;
+		}catch(\Exception $e){
+			$this->notificationErrors('Falha na função getApplicationUseNow', $e->getMessage()); exit;
 		}
 
 		// Defining configuration of system
 		try {
 			$this->getImportCurrentDataApplication();
-		}catch(Exception $e){
-			$this->notificationErrors($e->getMessage()); exit;
+		}catch(\Exception $e){
+			$this->notificationErrors('Falha na função getImportCurrentDataApplication', $e->getMessage()); exit;
 		}
 
 		// Defining configuration of application
 		try {
 			$this->setSystemConfigsCurrentApplication();
-		}catch(Exception $e){
-			$this->notificationErrors($e->getMessage()); exit;
+		}catch(\Exception $e){
+			$this->notificationErrors('Falha na função setSystemConfigsCurrentApplication', $e->getMessage()); exit;
 		}
 
 		//return path into application
@@ -146,17 +146,17 @@ class Init{
 			try {
 				$conf = Yaml::parse(file_get_contents(PATH_ROOT.'/config.yml'));
 			}catch(ParseException $e){
-			    throw new Exception("Não é possível analisar dados YAML: %s ".$e->getMessage());
+			    throw new \Exception("Não é possível analisar dados YAML: %s ".$e->getMessage());
 			}
 		}else{
-			throw new Exception("<b>config.yml</b> <br/> Arquivo de configuração não foi encontrado na raiz do projeto.");
+			throw new \Exception("config.yml Arquivo de configuração não foi encontrado na raiz do projeto.");
 		}
 
 		//verify and define applicatoin disponible for project in addition to default.
 		if(isset($conf['application_src']) && !is_array($conf['application_src'])){
-			throw new Exception("<b>config.yml</b> <br/> Você precisa definir um array de 'application_src'. Ex: default: /app/default/");
+			throw new \Exception("config.yml Você precisa definir um array de 'application_src'. Ex: default: /app/default/");
 		}else if(array_key_exists('default', $conf['application_src'])==''){
-			throw new Exception("<b>config.yml</b> <br/> Você precisa uma aplicação como default. Ex: default: /app/default/");
+			throw new \Exception("config.yml Você precisa uma aplicação como default. Ex: default: /app/default/");
 		}else{
 			$this->setApplication($conf['application_src']);
 		}
@@ -308,7 +308,7 @@ class Init{
 		}
 
 		if($this->getAddressUri()==''){
-			throw new Exception("Você deve definir uma url em address_uri_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
+			throw new \Exception("Você deve definir uma url em address_uri_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
 		}
 
 		$this->setConnectionDb($app_config);
@@ -320,7 +320,7 @@ class Init{
 		session_write_close();
 		/* Set limiter cache, default: private */
 		if($this->getCacheLimiter() != 'nochace' && $this->getCacheLimiter() != 'private' && $this->getCacheLimiter() != 'private_no_expire' && $this->getCacheLimiter() != 'public'){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Você precisa definir a variável 'session_cache_limiter' com um valor válido.");
+			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_limiter' com um valor válido.");
 		}else{
 			session_cache_limiter($this->getCacheLimiter());
 		}
@@ -335,7 +335,7 @@ class Init{
 
 		/* Set time in seconds for expite sessions */
 		if((int)$this->getCacheExpire()==0){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Você precisa definir a variável 'session_cache_expire' com um valor inteiro em segundos. Ex. 10080 para uma semana.");
+			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_expire' com um valor inteiro em segundos. Ex. 10080 para uma semana.");
 		}else{
 			session_cache_expire($this->getCacheExpire());
 
@@ -378,12 +378,12 @@ class Init{
 			array_pop($difLog);
 			$difLog = implode('/', $difLog).'/';
 			if(!file_exists($difLog) || $difLog==''){
-				mkdir($difLog, 777, true);
+				mkdir($difLog, 0777);
 			}else{
-				chmod($difLog, 777);
+				chmod($difLog, 0777);
 			}
-			chmod(PATH_ROOT.$this->getErrorLog(), 777);
 			$file = fopen(PATH_ROOT.$this->getErrorLog(), "w+") or die("Arquivo de log não pode ser aberto!");
+			chmod(PATH_ROOT.$this->getErrorLog(), 0777);
 			$txt = "Created: ".date('d-m-Y H:m:i')."\n";
 			fwrite($file, $txt);
 			fclose($file);
@@ -392,14 +392,14 @@ class Init{
 
 		// error log
 		if($this->getDisplayErrors()!='On' && $this->getDisplayErrors()!='Off' && $this->getDisplayErrors()!=''){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Valor de display_errors deve ser 'On', 'Off' ou ''.");
+			throw new \Exception("setSystemConfigs() Valor de display_errors deve ser 'On', 'Off' ou ''.");
 		}else if($this->getDisplayErrors()!=''){
 			ini_set('display_errors'	, 	$this->getDisplayErrors());
 		}
 
 		//Set if have log errors
 		if($this->getLogErrors()!='On' && $this->getLogErrors()!='Off' && $this->getLogErrors()!=''){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Valor de log_errors deve ser 'On', 'Off' ou ''.");
+			throw new \Exception("setSystemConfigs() Valor de log_errors deve ser 'On', 'Off' ou ''.");
 		}else if($this->getLogErrors()!=''){
 			ini_set('log_errors'	, 	$this->getLogErrors());
 		}
@@ -407,7 +407,7 @@ class Init{
 
 		//Set o tipo de erro
 		if($this->getErrorReporting()!='' && array_search($this->getErrorReporting(), array("E_ERROR","E_WARNING","E_PARSE","E_NOTICE","E_CORE_ERROR","E_CORE_WARNING","E_COMPILE_ERROR","E_COMPILE_WARNING","E_USER_ERROR","E_USER_WARNING","E_USER_NOTICE","E_ALL","E_STRICT","E_RECOVERABLE_ERROR","0"))==''){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Valor de error_reporting deve conter um valor compativel. Ex: E_ERROR ,E_WARNING, E_NOTICE, E_ALL ...");
+			throw new \Exception("setSystemConfigs() Valor de error_reporting deve conter um valor compativel. Ex: E_ERROR ,E_WARNING, E_NOTICE, E_ALL ...");
 		}else if($this->getErrorReporting()!=''){
 
 			switch ($this->getErrorReporting()) {
@@ -433,7 +433,7 @@ class Init{
 
 		/* Define o limitador de cache para 'private' */
 		if($this->getLocale()==''){
-			throw new Exception("<b>setSystemConfigs()</b> <br/> Você precisa definir a variável 'locale'. Ex. pt_BR para sua localização.");
+			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'locale'. Ex. pt_BR para sua localização.");
 		}else{
 			setlocale(LC_CTYPE, $this->getLocale());
 		}
@@ -445,7 +445,7 @@ class Init{
 			try {
 				$app_config = Yaml::parse(file_get_contents(PATH_ROOT.'/app/app_config.yml'));
 				if(count($app_config)==0){
-					throw new Exception("Você deve configurar o arquivo app_config.yml");
+					throw new \Exception("Você deve configurar o arquivo app_config.yml");
 				}
 
 				if(!isset($app_config['default']['development']['address_uri']) || strlen($app_config['default']['development']['address_uri'])<5){
@@ -462,11 +462,11 @@ class Init{
 					file_put_contents(PATH_ROOT.'/app/app_config.yml', str_replace(array("'On'","'Off'"), array("On","Off"), Yaml::dump($app_config , 5 , 5)));
 				}
 			}catch(ParseException $e){
-			    throw new Exception("Não é possível analisar dados app_config.yml : %s ".$e->getMessage());
+			    throw new \Exception("Não é possível analisar dados app_config.yml : %s ".$e->getMessage());
 			}
 			return $app_config;
 		}else{
-			throw new Exception("Arquivo de configuração 'app_config.yml' não encontrado em: ".PATH_ROOT.'/app/');
+			throw new \Exception("Arquivo de configuração 'app_config.yml' não encontrado em: ".PATH_ROOT.'/app/');
 		}
 	}
 
@@ -508,15 +508,15 @@ class Init{
 	private function setSystemConfigsCurrentApplication(){
 		//verifica use_https
 		if($this->getUseHttps()!='On' && $this->getUseHttps()!='Off'){
-			throw new Exception("<b>setSystemConfigsCurrentApplication()</b> <br/> Valor de use_https deve ser 'On', 'Off'.");
+			throw new \Exception("setSystemConfigsCurrentApplication() Valor de use_https deve ser 'On', 'Off'.");
 		}
 		//verifica use_www
 		if($this->getUseWww()!='On' && $this->getUseWww()!='Off'){
-			throw new Exception("<b>setSystemConfigsCurrentApplication()</b> <br/> Valor de use_www deve ser 'On', 'Off'.");
+			throw new \Exception("setSystemConfigsCurrentApplication() Valor de use_www deve ser 'On', 'Off'.");
 		}
 		//verifica address_uri
 		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || preg_match('/^www/', $this->getAddressUri())){
-			throw new Exception("<b>setSystemConfigsCurrentApplication()</b> <br/> Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
+			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
 		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri());
@@ -588,16 +588,17 @@ class Init{
 
 		$this->setApplicationName($app_path);
 		if(!file_exists(PATH_ROOT.$app_public)){
-			throw new Exception("app_public não foi encontrado em: ".PATH_ROOT.$app_public);
+			throw new \Exception("app_public não foi encontrado em: ".PATH_ROOT.$app_public);
 		}else{
 			$this->setPublicPath($app_public);
 		}
 
 	}
 
-	private function notificationErrors($text=''){
-		require_once PATH_ROOT.'/config/construction/class.errorViewPHP.php';
-		echo errorViewPHP::instanceClass(utf8_encode($text));
+	private function notificationErrors($title='',$text=''){
+		$e = new \DwPhp\ErrorViewPHP($title,$text);
+		echo $e->showErrorPhp();
+		exit();
 	}
 
 	public function writeErrorSQL($erro=''){
@@ -820,10 +821,10 @@ class Init{
 								if(in_array($function, $methods)){
 									$this->controller->$function();
 								}else{
-									throw new Exception(utf8_decode("Não foi encontrada a função " . $function . " no controller " . $this->getPageCtrl()));
+									throw new \Exception(utf8_decode("Não foi encontrada a função " . $function . " no controller " . $this->getPageCtrl()));
 								}
-							}catch(Exception $e){
-								$this->notificationErrors($e->getMessage()); exit;
+							}catch(\Exception $e){
+								$this->notificationErrors('Funcção não encontrada:' ,$e->getMessage()); exit;
 							}
 						}
 					}
@@ -836,7 +837,7 @@ class Init{
 						$this->template->constructPage();
 					}
 				} catch (Exception $e) {
-					$this->notificationErrors($e->getMessage()); exit;
+					$this->notificationErrors('Não inciado constructPage', $e->getMessage()); exit;
 				}
 			}else if(class_exists('App\\action', true)){
 				$n='App\action';
