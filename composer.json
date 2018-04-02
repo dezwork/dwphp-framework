@@ -19,11 +19,11 @@
         "symfony/yaml": "3.*",
         "phpunit/phpunit": "5.*",
         "mockery/mockery": "*",
-        "moneyphp/money": "3.*"
+        "moneyphp/money": "3.*",
+	"adodb/adodb-php": "5.*"
     },
     "require-dev": {
-        "doctrine/orm": "v2.5.10",
-        "adodb/adodb-php": "5.*"
+        "doctrine/orm": "v2.5.10"
     },
     "autoload": {
         "psr-4": {
