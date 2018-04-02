@@ -27,7 +27,9 @@
     },
     "autoload": {
         "psr-4": {
-            "util\\": [
+            "DwPhp\\": "config/construction/",
+	    "DwPhp\\Library\\": "library/",
+	    "util\\": [
                 "library/util/src/",
                 "library/util/tests/"
             ]
