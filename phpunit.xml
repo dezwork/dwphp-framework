@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="bootstrap-phpunit.php">
+    <!-- Indicando qual é o diretório onde as classes de teste se encontram -->
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory suffix=".php">library/util/tests/</directory>
+        </testsuite>
+    </testsuites>
+
+<!-- Adicionando filtros, basicamente whitelist (diretórios que serão executados),
+    dentro temos o exclude (diretórios que não serão executados pelos testes) -->
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./library/util/src/</directory>
+            <exclude>
+                <directory suffix=".php">./vendor/</directory>
+                <directory suffix=".php">./library/models/</directory>
+            </exclude>
+        </whitelist>
+        <blacklist>
+            <directory suffix=".php">*Test</directory>
+        </blacklist>
+    </filter>
+    <groups>
+        <include>
+            <!--<group>Loja</group>-->
+            <!--<group>MaisAlgumGrupo</group>-->
+        </include>
+        <exclude>
+            <!--<group>NomeDoGrupo</group>-->
+            <!--<group>MaisAlgumGrupo</group>-->
+        </exclude>
+    </groups>
+    <logging>
+    <!--    <log type="testdox-text" target="library/util/tests/_reports/testdox.txt"/> -->
+    <!--    <log type="testdox-html" target="library/util/tests/_reports/testdox.html"/> -->
+    <!--    <log type="coverage-html" target="coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="45" highLowerBound="85" /> -->
+    </logging>
+</phpunit>
