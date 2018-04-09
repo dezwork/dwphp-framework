@@ -17,22 +17,22 @@
     "require": {
         "php": "^7",
         "symfony/yaml": "3.*",
-        "phpunit/phpunit": "5.*",
-        "mockery/mockery": "*",
         "moneyphp/money": "3.*",
-	"adodb/adodb-php": "5.*"
+        "adodb/adodb-php": "5.*"
     },
     "require-dev": {
+        "phpunit/phpunit": "5.*",
+        "mockery/mockery": "*",
         "doctrine/orm": "v2.5.10"
     },
     "autoload": {
         "psr-4": {
             "DwPhp\\": "config/construction/",
-	    "DwPhp\\Library\\": "library/",
-	    "util\\": [
-                "library/util/src/",
-                "library/util/tests/"
-            ]
+    	    "DwPhp\\Library\\": "library/",
+    	    "util\\": [
+                    "library/util/src/",
+                    "library/util/tests/"
+                ]
         }
     }
 }

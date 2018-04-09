@@ -38,8 +38,8 @@ try {
 		break;
 		case 'help':
 			echo "\nLista de comandos: \n";
-			echo "\e[1m./dwphp/console doctrine create-class \e[0m : Gera as classes em php conforme esquema do banco de dados\n";
-			echo "\e[1m./dwphp/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
+			echo "\e[1m./vendor/dezwork/dwphp-framework/console doctrine create-class \e[0m : Gera as classes em php conforme esquema do banco de dados\n";
+			echo "\e[1m./vendor/dezwork/dwphp-framework/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
 		break;
 		default:
 			throw new Exception("\n \033[31m Esse comando ".$command." não existe brother!! \033[0m Tenta um './dwphp help' ;) \n");

@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 28-03-2018 17:26:22
+ * @Last Modified time: 09-04-2018 01:02:36
  */
 namespace util;
 use Money\Currency;
@@ -15,23 +15,40 @@ class Monetary{
     public $money;
 
     public function __construct($number, $moeda='BRL'){
+        $number = ltrim(str_replace(array('.',','), '', $number),"0");
         return $this->setMoney($number, $moeda='BRL');
     }
 
     public function add($money){
-        return ($this->getMoney())->add($money->getMoney());
+        $this->setMoney(($this->getMoney())->add($money->getMoney())->getAmount());
+        return $this;
     }
 
     public function subtract($money){
-        return ($this->getMoney())->subtract($money->getMoney());
+        $this->setMoney(($this->getMoney())->subtract($money->getMoney())->getAmount());
+        return $this;
     }
 
     public function multiply($money){
-        return ($this->getMoney())->multiply($money);
+        $this->setMoney(($this->getMoney())->multiply($money)->getAmount());
+        return $this;
     }
 
-    public function divide($money){
-        return ($this->getMoney())->divide($money);
+    public function divide($parcela){
+        $this->setMoney(($this->getMoney())->divide($parcela)->getAmount());
+        return $this;
+    }
+
+    public function allocateTo($parcela){
+        $parcelas=($this->getMoney())->allocateTo($parcela);
+        $parcelasMonetary=array();
+        if(count($parcela)>0){
+            foreach ($parcelas as $key => $value) {
+                $parcelasMonetary[] = new Monetary($value->getAmount());
+            }
+        }
+
+        return $parcelasMonetary;
     }
 
     public function percentage($pct){

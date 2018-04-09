@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 02-04-2018 09:03:51
+ * @Last Modified time: 09-04-2018 10:16:52
  */
 
 namespace util;
@@ -118,6 +118,86 @@ class DateTime{
      */
     public function timestamp($d='-',$h=':'){
         return $this->getDateOBJ()->getTimestamp();
+    }
+
+    /**
+     * @return date
+    */
+    public function addDay($d){
+        return $this->getDateOBJ()->add(new \DateInterval('P'.(int)$d.'D'));
+    }
+
+    /**
+     * @return date
+    */
+    public function addMonth($m){
+        return $this->getDateOBJ()->add(new \DateInterval('P'.(int)$m.'D'));
+    }
+
+    /**
+     * @return date
+    */
+    public function addYear($y){
+        return $this->getDateOBJ()->add(new \DateInterval('P'.(int)$y.'Y'));
+    }
+
+    /**
+     * @return date
+    */
+    public function addHour($h){
+        return $this->getDateOBJ()->add(new \DateInterval('PT'.(int)$h.'H'));
+    }
+    /**
+     * @return date
+    */
+    public function addMinut($m){
+        return $this->getDateOBJ()->add(new \DateInterval('PT'.(int)$m.'M'));
+    }
+    /**
+     * @return date
+    */
+    public function addSecond($s){
+        return $this->getDateOBJ()->add(new \DateInterval('PT'.(int)$s.'S'));
+    }
+
+    /**
+     * @return date
+    */
+    public function subDay($d){
+        return $this->getDateOBJ()->sub(new \DateInterval('P'.(int)$d.'D'));
+    }
+
+    /**
+     * @return date
+    */
+    public function subMonth($m){
+        return $this->getDateOBJ()->sub(new \DateInterval('P'.(int)$m.'D'));
+    }
+
+    /**
+     * @return date
+    */
+    public function subYear($y){
+        return $this->getDateOBJ()->sub(new \DateInterval('P'.(int)$y.'Y'));
+    }
+
+    /**
+     * @return date
+    */
+    public function subHour($h){
+        return $this->getDateOBJ()->sub(new \DateInterval('PT'.(int)$h.'H'));
+    }
+    /**
+     * @return date
+    */
+    public function subMinut($m){
+        return $this->getDateOBJ()->sub(new \DateInterval('PT'.(int)$m.'M'));
+    }
+    /**
+     * @return date
+    */
+    public function subSecond($s){
+        return $this->getDateOBJ()->sub(new \DateInterval('PT'.(int)$s.'S'));
     }
 
     /**

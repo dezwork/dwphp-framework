@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  * @Author: Cleberson Bieleski
  * @Date:   2018-03-14 15:52:50
  * @Last Modified by:   Cleber
- * @Last Modified time: 28-03-2018 17:25:54
+ * @Last Modified time: 09-04-2018 10:23:22
  */
 class MonetaryTest extends TestCase{
 
@@ -32,9 +32,9 @@ class MonetaryTest extends TestCase{
         $value3 = new Monetary('123400');
         $value4 = new Monetary('-50000');
 
-        $this->assertEquals( (new Monetary('60050'))->getMoney() , $value1->add($value2) );
-        $this->assertEquals( (new Monetary('143450'))->getMoney() , $value3->add($value1) );
-        $this->assertEquals( (new Monetary('-10000'))->getMoney() , $value2->add($value4) );
+        $this->assertEquals( (new Monetary('60050'))->getMoney()->getAmount() , $value1->add($value2)->getMoney()->getAmount() );
+        $this->assertEquals( (new Monetary('183450'))->getMoney()->getAmount() , $value3->add($value1)->getMoney()->getAmount() );
+        $this->assertEquals( (new Monetary('-10000'))->getMoney()->getAmount() , $value2->add($value4)->getMoney()->getAmount() );
 
     }
 
@@ -46,8 +46,8 @@ class MonetaryTest extends TestCase{
         $value2 = new Monetary('40203');
         $value3 = new Monetary('123400');
 
-        $this->assertEquals( (new Monetary('20153'))->getMoney() , $value2->subtract($value1) );
-        $this->assertEquals( (new Monetary('103350'))->getMoney() , $value3->subtract($value1) );
+        $this->assertEquals( (new Monetary('20153'))->getMoney()->getAmount() , $value2->subtract($value1)->getMoney()->getAmount() );
+        $this->assertEquals( (new Monetary('103350'))->getMoney()->getAmount() , $value3->subtract($value1)->getMoney()->getAmount() );
 
     }
 
@@ -59,8 +59,8 @@ class MonetaryTest extends TestCase{
         $value2 = new Monetary('40203');
         $value3 = new Monetary('123400');
 
-        $this->assertEquals( (new Monetary('20050'))->getMoney() , $value1->multiply(2) );
-        $this->assertEquals( (new Monetary('4961050200'))->getMoney() , $value3->multiply($value2->getMoney()->getAmount()) );
+        $this->assertEquals( (new Monetary('20050'))->getMoney()->getAmount() , $value1->multiply(2)->getMoney()->getAmount() );
+        $this->assertEquals( (new Monetary('4961050200'))->getMoney()->getAmount() , $value3->multiply($value2->getMoney()->getAmount())->getMoney()->getAmount() );
 
     }
 
@@ -71,8 +71,8 @@ class MonetaryTest extends TestCase{
         $value1 = new Monetary('1000');
         $value2 = new Monetary('33340');
 
-        $this->assertEquals( (new Monetary('500'))->getMoney() , $value1->divide(2) );
-        $this->assertEquals( (new Monetary('5557'))->getMoney() , $value2->divide(6) );
+        $this->assertEquals( (new Monetary('500'))->getMoney()->getAmount() , $value1->divide(2)->getMoney()->getAmount() );
+        $this->assertEquals( (new Monetary('5557'))->getMoney()->getAmount() , $value2->divide(6)->getMoney()->getAmount() );
 
     }
 
