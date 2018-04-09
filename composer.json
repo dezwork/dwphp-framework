@@ -21,11 +21,6 @@
         "adodb/adodb-php": "5.*"
     },
     "require-dev": {
-        "php": "^7",
-        "symfony/yaml": "3.*",
-        "moneyphp/money": "3.*",
-        "adodb/adodb-php": "5.*",
-        "phpunit/phpunit": "5.*",
         "mockery/mockery": "*",
         "doctrine/orm": "v2.5.10"
     },
@@ -34,9 +29,9 @@
             "DwPhp\\": "config/construction/",
     	    "DwPhp\\Library\\": "library/",
     	    "util\\": [
-                    "library/util/src/",
-                    "library/util/tests/"
-                ]
+                "library/util/src/",
+                "library/util/tests/"
+            ]
         }
     }
 }
