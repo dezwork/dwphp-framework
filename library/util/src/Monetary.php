@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 09-04-2018 01:02:36
+ * @Last Modified time: 10-04-2018 17:41:27
  */
 namespace util;
 use Money\Currency;
@@ -36,6 +36,11 @@ class Monetary{
 
     public function divide($parcela){
         $this->setMoney(($this->getMoney())->divide($parcela)->getAmount());
+        return $this;
+    }
+
+    public function symmetrical(){
+        $this->setMoney(($this->getMoney())->multiply(-1)->getAmount());
         return $this;
     }
 
