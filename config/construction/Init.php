@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 2018-03-13 10:14:00
+ * @Last Modified time: 12-04-2018 17:13:51
  */
 
 namespace DwPhp;
@@ -317,7 +317,7 @@ class Init{
 
 	// realiza as configurações do sistema
 	private function setSystemConfigs(){
-		session_write_close();
+		session_register_shutdown();
 		/* Set limiter cache, default: private */
 		if($this->getCacheLimiter() != 'nochace' && $this->getCacheLimiter() != 'private' && $this->getCacheLimiter() != 'private_no_expire' && $this->getCacheLimiter() != 'public'){
 			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_limiter' com um valor válido.");
