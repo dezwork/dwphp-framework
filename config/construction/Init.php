@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 12-04-2018 17:00:57
+ * @Last Modified time: 13-04-2018 16:45:01
  */
 
 namespace DwPhp;
@@ -98,7 +98,7 @@ class Init{
 	public  $methodsURI;
 
 	function __construct($type=''){
-		
+
 		if($type=='test'){
 			return false;
 		}
@@ -318,7 +318,6 @@ class Init{
 
 	// realiza as configurações do sistema
 	private function setSystemConfigs(){
-		session_register_shutdown();
 		/* Set limiter cache, default: private */
 		if($this->getCacheLimiter() != 'nochace' && $this->getCacheLimiter() != 'private' && $this->getCacheLimiter() != 'private_no_expire' && $this->getCacheLimiter() != 'public'){
 			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_limiter' com um valor válido.");
@@ -331,7 +330,7 @@ class Init{
 			mkdir(PATH_ROOT.$this->getSessionSavePath(), 0777, true);
 		}
 
-		ini_set('session.save_path'	,	PATH_ROOT.$this->getSessionSavePath());
+		session_save_path(PATH_ROOT.$this->getSessionSavePath());
 		ini_set('session.cookie_path'	,	PATH_ROOT.$this->getSessionSavePath());
 
 		/* Set time in seconds for expite sessions */
