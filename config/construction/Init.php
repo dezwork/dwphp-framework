@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 13-04-2018 16:45:01
+ * @Last Modified time: 19-04-2018 20:51:46
  */
 
 namespace DwPhp;
@@ -37,9 +37,9 @@ class Init{
 	// exibe ou não os erros no browser. Opções (On | Off)
 	private $logErrors 			= 	'On';
 	// local onde os logs de erros devem ser salvos no sistema. Padrão PATH_ROOT.'/data/log/error_system.log'
-	private $errorLog 			=	'/dwphp/storage/log/error_php.log';
+	private $errorLog 			=	'/storage/log/error_php.log';
 	// local onde os logs de erros devem ser salvos no sistema. Padrão PATH_ROOT.'/data/log/error_system.log'
-	private $errorSql 			=	'/dwphp/storage/log/error_sql.log';
+	private $errorSql 			=	'/storage/log/error_sql.log';
 	// define a diretiva em tempo de execução. O PHP tem vários níveis de erros, usando esta função você pode definir o nível durante a execução do seu script.
 	private $errorReporting 	=	"0";
 	// define quantos registros devem ser salvos sobre o carregamantos das páginas;
@@ -56,7 +56,7 @@ class Init{
 
 	private $cacheLimiter 		=	'private';
 	// local onde os arquivos temporarios das sessions serão salvas. Padrão PATH_ROOT.'/data/cache/'
-	private $sessionSavePath 	= 	'/dwphp/storage/cache/session/';
+	private $sessionSavePath 	= 	'/storage/cache/session/';
 	/* define o prazo do cache será expirado em segundo. Por padrão, 7 dias */
 	private $cacheExpire 		=	10080;
 	/* permite cache de páginas. Padrão é false */
@@ -66,8 +66,8 @@ class Init{
 	*/
 	private $locale 			=	'pt_BR';
 	private $dateTimezone 		=	'America/Sao_Paulo';
-	private $uploadMaxFilesize =	'2';
-	private $postMaxSize 		=	'2';
+	private $uploadMaxFilesize =	'100';
+	private $postMaxSize 		=	'100';
 
 	/**
 		controle da url
@@ -320,38 +320,32 @@ class Init{
 	private function setSystemConfigs(){
 		/* Set limiter cache, default: private */
 		if($this->getCacheLimiter() != 'nochace' && $this->getCacheLimiter() != 'private' && $this->getCacheLimiter() != 'private_no_expire' && $this->getCacheLimiter() != 'public'){
-			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_limiter' com um valor válido.");
-		}else{
-			session_cache_limiter($this->getCacheLimiter());
+			$this->getCacheLimiter('private');
 		}
+		session_cache_limiter($this->getCacheLimiter());
+
 
 		//Update path to save sessions
 		if(!file_exists(PATH_ROOT.$this->getSessionSavePath()) || $this->getSessionSavePath()==''){
 			mkdir(PATH_ROOT.$this->getSessionSavePath(), 0777, true);
 		}
 
-		session_save_path(PATH_ROOT.$this->getSessionSavePath());
-		ini_set('session.cookie_path'	,	PATH_ROOT.$this->getSessionSavePath());
-
 		/* Set time in seconds for expite sessions */
-		if((int)$this->getCacheExpire()==0){
-			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'session_cache_expire' com um valor inteiro em segundos. Ex. 10080 para uma semana.");
-		}else{
-			session_cache_expire($this->getCacheExpire());
+		session_cache_expire((empty($this->getCacheExpire())?1000:$this->getCacheExpire()));
+		session_save_path(PATH_ROOT.$this->getSessionSavePath());
 
-			$dir_session = ini_get('session.save_path');
-			if ($handle = opendir($dir_session)) {
-			  foreach (glob($dir_session."sess_*") as $filename) {
-			    if (filemtime($filename) + $this->getCacheExpire() < time()) {
-			      @unlink($filename);
-			    }
-			  }
-			}
-		}
-		//start sessioins
 		session_start();
-		//Start buffer of exit
 		ob_start();
+
+
+		$dir_session = session_save_path();
+		if ($handle = opendir($dir_session)) {
+		  foreach (glob($dir_session."sess_*") as $filename) {
+		    if (filemtime($filename) + $this->getCacheExpire() < time()) {
+		      @unlink($filename);
+		    }
+		  }
+		}
 
 		/*Set time zone for system */
 		if($this->getChaceNavegation()==false){
@@ -407,8 +401,9 @@ class Init{
 
 		//Set o tipo de erro
 		if($this->getErrorReporting()!='' && array_search($this->getErrorReporting(), array("E_ERROR","E_WARNING","E_PARSE","E_NOTICE","E_CORE_ERROR","E_CORE_WARNING","E_COMPILE_ERROR","E_COMPILE_WARNING","E_USER_ERROR","E_USER_WARNING","E_USER_NOTICE","E_ALL","E_STRICT","E_RECOVERABLE_ERROR","0"))==''){
-			throw new \Exception("setSystemConfigs() Valor de error_reporting deve conter um valor compativel. Ex: E_ERROR ,E_WARNING, E_NOTICE, E_ALL ...");
-		}else if($this->getErrorReporting()!=''){
+			$this->setErrorReporting('E_ALL');
+		}
+		if($this->getErrorReporting()!=''){
 
 			switch ($this->getErrorReporting()) {
 				case "E_ERROR"				: error_reporting(E_ERROR); 				break;
@@ -433,10 +428,9 @@ class Init{
 
 		/* Define o limitador de cache para 'private' */
 		if($this->getLocale()==''){
-			throw new \Exception("setSystemConfigs() Você precisa definir a variável 'locale'. Ex. pt_BR para sua localização.");
-		}else{
-			setlocale(LC_CTYPE, $this->getLocale());
+			$this->setLocale('pt_BR');
 		}
+		setlocale(LC_CTYPE, $this->getLocale());
 	}
 
 
@@ -508,11 +502,11 @@ class Init{
 	private function setSystemConfigsCurrentApplication(){
 		//verifica use_https
 		if($this->getUseHttps()!='On' && $this->getUseHttps()!='Off'){
-			throw new \Exception("setSystemConfigsCurrentApplication() Valor de use_https deve ser 'On', 'Off'.");
+			$this->setUseHttps('Off');
 		}
 		//verifica use_www
 		if($this->getUseWww()!='On' && $this->getUseWww()!='Off'){
-			throw new \Exception("setSystemConfigsCurrentApplication() Valor de use_www deve ser 'On', 'Off'.");
+			$this->setUseWww('Off');
 		}
 		//verifica address_uri
 		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || preg_match('/^www/', $this->getAddressUri())){
@@ -847,7 +841,7 @@ class Init{
 		}
 	}
 
-	public  function fileVersion($localFile=''){
+	public function fileVersion($localFile=''){
 		// retorna string
 		$dir=$this->getPublicPath();
 		if(strpos($localFile,"/public/")===false){
