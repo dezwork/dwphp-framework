@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 19-04-2018 21:17:31
+ * @Last Modified time: 19-04-2018 21:19:32
  */
 
 namespace DwPhp;
@@ -666,7 +666,7 @@ class Init{
 			}while(!$dir);
 		}else{
 			$directory_ctrl = $this->getPathApplication().'controllers';
-			$directory_view = $this->getPathApplication().'views/pages/default';
+			$directory_view = $this->getPathApplication().'views/pages';
 			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
 			do{
 				if( (file_exists($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
