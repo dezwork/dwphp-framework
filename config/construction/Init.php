@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 19-04-2018 21:19:32
+ * @Last Modified time: 20-04-2018 09:42:11
  */
 
 namespace DwPhp;
@@ -666,7 +666,7 @@ class Init{
 			}while(!$dir);
 		}else{
 			$directory_ctrl = $this->getPathApplication().'controllers';
-			$directory_view = $this->getPathApplication().'views/pages';
+			$directory_view = $this->getPathApplication().'views/pages/default/';
 			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
 			do{
 				if( (file_exists($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
@@ -736,8 +736,8 @@ class Init{
 		if($this->getLimitDataLoadPage()!=0){
 			$text='';
 			$addLine=true;
-			if(file_exists(PATH_ROOT."/dwphp/storage/log/loadpage.log")){
-				$f=fopen(PATH_ROOT."/dwphp/storage/log/loadpage.log","r+");
+			if(file_exists(PATH_ROOT."/storage/log/loadpage.log")){
+				$f=fopen(PATH_ROOT."/storage/log/loadpage.log","r+");
 				while (!feof($f)) {
 					//pega conteudo da linha
 					$line=fgets($f);
