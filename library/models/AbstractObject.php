@@ -4,15 +4,12 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 19-04-2018 21:40:28
+ * @Last Modified time: 19-04-2018 21:41:46
  */
 
 	namespace DwPhp\Library\models;
 	use DwPhp\Library\sql;
-	/**
-		Date Created: 30.11.2017 - Cleberson Bieleski
-		Date Updated: 04.12.2017 - Cleberson Bieleski
-	*/
+
 	abstract class AbstractObject{
 
 		public function getNum(){
