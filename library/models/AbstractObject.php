@@ -3,8 +3,8 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-31 11:02:44
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 19-04-2018 21:40:28
  */
 
 	namespace DwPhp\Library\models;
@@ -87,40 +87,58 @@
             return $where;
 	    }
 
-    	public function insert(){
-    		$db = new sql();
-	        $params = get_object_vars($this);
-	        if(isset($params['dbTable'])){
-	        	unset($params['dbTable']);
+    	public function insert($debug = false){
+	        $db = new sql();
+
+	        $params_tmp = get_object_vars($this);
+	        unset($params_tmp['dbTable']);
+	        unset($params_tmp['dateUpdate']);
+	        unset($params_tmp['userUpdate']);
+
+	        $params_tmp = array_filter($params_tmp, function($var){ return !is_null($var);} );
+
+	        $params = array();
+	        foreach($params_tmp as $i => $param){
+	            $i = systemFunctions::fromCamelCase($i);
+	            $params[$i] = $param;
+	        }
+
+	        if($debug === true){
+	            $db->setTest(true);
 	        }
 	        $db->setTable($this->dbTable);
 	        $db->setSet($params);
-	        //$db->setTest(true);
 	        $db->Insert();
-
-	    //    $query = $db->getLastQuery();
-	    //    $this->saveLog('INSERT', $query);
 
 	        $this->id = $db->getInsertId();
 	        return $this->id;
 	    }
 
-    	public function update(){
+	    public function update($debug = false){
 	        $db = new sql();
 
-	        $params = get_object_vars($this);
-	        unset($params['dbTable']);
+	        $params_tmp = get_object_vars($this);
 
-	        $params = array_diff($params, array(null));
+	        unset($params_tmp['dbTable']);
+	        unset($params_tmp['dateCreate']);
+	        unset($params_tmp['userCreate']);
 
+	        // $params_tmp = array_diff($params_tmp, array(NULL));
+	        $params_tmp = array_filter($params_tmp, function($var){ return !is_null($var);} );
+
+	        $params = array();
+	        foreach($params_tmp as $i => $param){
+	            $i = systemFunctions::fromCamelCase($i);
+	            $params[$i] = $param;
+	        }
+
+	        if($debug === true){
+	            $db->setTest(true);
+	        }
 	        $db->setTable($this->dbTable);
 	        $db->setSet($params);
 	        $db->setWhere(array('id' => $this->getId()));
 	        $db->Update();
-
-	        $query = $db->getLastQuery();
-
-	    //    $this->saveLog('UPDATE', $query);
 
 	        return $this->getId();
 	    }
