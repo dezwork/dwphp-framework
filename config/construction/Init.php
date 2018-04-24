@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 20-04-2018 09:42:11
+ * @Last Modified time: 23-04-2018 22:26:23
  */
 
 namespace DwPhp;
@@ -98,7 +98,6 @@ class Init{
 	public  $methodsURI;
 
 	function __construct($type=''){
-
 		if($type=='test'){
 			return false;
 		}
@@ -261,32 +260,46 @@ class Init{
 		if($this->getEnvironmentStatus()=='production'){
 			if(isset($app_config[$this->getNameApplication()]['production'])){
 				$c=$app_config[$this->getNameApplication()]['production'];
-				$this->setAddressUri($c['address_uri']);
-				$this->setUseHttps($c['use_https']);
-				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='staging'){
 			if(isset($app_config[$this->getNameApplication()]['staging'])){
 				$c=$app_config[$this->getNameApplication()]['staging'];
-				$this->setAddressUri($c['address_uri']);
-				$this->setUseHttps($c['use_https']);
-				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='testing'){
 			if(isset($app_config[$this->getNameApplication()]['testing'])){
 				$c=$app_config[$this->getNameApplication()]['testing'];
-				$this->setAddressUri($c['address_uri']);
-				$this->setUseHttps($c['use_https']);
-				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='development'){
 			if(isset($app_config[$this->getNameApplication()]['development'])){
 				$c=$app_config[$this->getNameApplication()]['development'];
-				$this->setAddressUri($c['address_uri']);
-				$this->setUseHttps($c['use_https']);
-				$this->setUseWww($c['use_www']);
 			}
 		}
+
+		if(strpos($c['address_uri'], '/')){
+			$search = explode('/', $c['address_uri']);
+			$search = $search[0];
+		}else{
+			$search = $c['address_uri'];
+		}
+
+
+		if($_SERVER['HTTP_HOST']!=$search){
+			if(strpos($_SERVER['HTTP_HOST'], $search)!==false){
+				$t = explode($search, $_SERVER['HTTP_HOST']);
+				$c['address_uri'] = $t[0].$c['address_uri'];
+			}else{
+				$c['address_uri'] = $_SERVER['HTTP_HOST'];
+			}
+		}
+		if(substr($c['address_uri'], -1)!='/'){
+			$c['address_uri'].='/';
+		}
+
+
+
+		$this->setAddressUri($c['address_uri']);
+		$this->setUseHttps($c['use_https']);
+		$this->setUseWww($c['use_www']);
 
 
 		//Get address_uri of file app_config.yml
