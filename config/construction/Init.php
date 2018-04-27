@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 23-04-2018 22:26:23
+ * @Last Modified time: 27-04-2018 15:04:42
  */
 
 namespace DwPhp;
@@ -231,29 +231,38 @@ class Init{
 				$addresUri = explode('/', $value['address_uri']);
                 if(!empty($addresUri[0]) && strpos($_SERVER['HTTP_HOST'] , $addresUri[0]) !== false ){
                 	$this->setEnvironmentStatus($key);
-
-                    if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
-                    	$dir_path = 'prod';
-                    }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
-                    	$dir_path = 'dev';
-                    	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
-                    		unlink(file_exists(PATH_ROOT.'/app/dev/'));
-                    	}
-                    }
-
-                	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
-                		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
-                			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
-                		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && file_exists(PATH_ROOT.'/app/prod/')){
-                			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
-                		}
-                	}
-                    $this->setApplicationPath('/app/'.$dir_path.'/'.$this->getApplicationName());
                     break;
                 }
             }
 
 		}
+
+		//define url atual caso não tenha nenhuma definida e seta production
+		if($this->getEnvironmentStatus()==''){
+			$this->setEnvironmentStatus('production');
+			$c['address_uri'] = $_SERVER['HTTP_HOST'];
+			if(substr($c['address_uri'], -1)!='/'){
+				$c['address_uri'].='/';
+			}
+		}
+
+		if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
+        	$dir_path = 'prod';
+        }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
+        	$dir_path = 'dev';
+        	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
+        		unlink(file_exists(PATH_ROOT.'/app/dev/'));
+        	}
+        }
+
+    	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
+    		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
+    			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
+    		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && file_exists(PATH_ROOT.'/app/prod/')){
+    			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
+    		}
+    	}
+        $this->setApplicationPath('/app/'.$dir_path.'/'.$this->getApplicationName());
 
 
 		//Get address_uri of file app_config.yml
@@ -282,7 +291,6 @@ class Init{
 			$search = $c['address_uri'];
 		}
 
-
 		if($_SERVER['HTTP_HOST']!=$search){
 			if(strpos($_SERVER['HTTP_HOST'], $search)!==false){
 				$t = explode($search, $_SERVER['HTTP_HOST']);
@@ -301,25 +309,6 @@ class Init{
 		$this->setUseHttps($c['use_https']);
 		$this->setUseWww($c['use_www']);
 
-
-		//Get address_uri of file app_config.yml
-		if($this->getEnvironmentStatus()=='production'){
-			if(isset($app_config['address_uri_production'])){
-				$this->setAddressUri($app_config['address_uri_production']);
-			}
-		}else if($this->getEnvironmentStatus()=='staging'){
-			if(isset($app_config['address_uri_staging'])){
-				$this->setAddressUri($app_config['address_uri_staging']);
-			}
-		}else if($this->getEnvironmentStatus()=='testing'){
-			if(isset($app_config['address_uri_testing'])){
-				$this->setAddressUri($app_config['address_uri_testing']);
-			}
-		}else if($this->getEnvironmentStatus()=='development'){
-			if(isset($app_config['address_uri_development'])){
-				$this->setAddressUri($app_config['address_uri_development']);
-			}
-		}
 
 		if($this->getAddressUri()==''){
 			throw new \Exception("Você deve definir uma url em address_uri_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
