@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 27-04-2018 15:04:42
+ * @Last Modified time: 03-05-2018 10:14:05
  */
 
 namespace DwPhp;
@@ -246,6 +246,18 @@ class Init{
 			}
 		}
 
+		//define url atual caso não tenha nenhuma definida e seta production
+		if($this->getEnvironmentStatus()==''){
+		    $this->setEnvironmentStatus('production');
+		    $c['address_uri'] = $_SERVER['HTTP_HOST'];
+		    if(substr($c['address_uri'], 0,4)!='www.'){
+		            $c['address_uri'] = substr($_SERVER['HTTP_HOST'],4);
+		    }
+		    if(substr($c['address_uri'], -1)!='/'){
+		            $c['address_uri'].='/';
+		    }
+		}
+
 		if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
         	$dir_path = 'prod';
         }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
@@ -307,6 +319,12 @@ class Init{
 
 		$this->setAddressUri($c['address_uri']);
 		$this->setUseHttps($c['use_https']);
+
+		if($c['use_www']!='On' && $c['use_www']!='Off' && substr($_SERVER['HTTP_HOST'], 0,4)=='www.'){
+			$c['use_www']='On';
+		}else{
+			$c['use_www']='Off';
+		}
 		$this->setUseWww($c['use_www']);
 
 
@@ -504,14 +522,18 @@ class Init{
 	private function setSystemConfigsCurrentApplication(){
 		//verifica use_https
 		if($this->getUseHttps()!='On' && $this->getUseHttps()!='Off'){
-			$this->setUseHttps('Off');
-		}
+			if((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']=='https') || (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")){
+                $this->setUseHttps('On');
+            }else{
+                $this->setUseHttps('Off');
+            }
+        }
 		//verifica use_www
 		if($this->getUseWww()!='On' && $this->getUseWww()!='Off'){
 			$this->setUseWww('Off');
 		}
 		//verifica address_uri
-		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || preg_match('/^www/', $this->getAddressUri())){
+		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || (preg_match('/^www/', $this->getAddressUri())) && $this->getEnvironmentStatus()!='production' ){
 			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
@@ -527,7 +549,7 @@ class Init{
 
         if($this->getUseHttps()=='On' || (preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='Off') || (!preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='On') || $k!=''){
             if(
-            	(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") || 
+            	( (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!='https') || ((isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "on"))) || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
