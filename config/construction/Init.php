@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 03-05-2018 10:14:05
+ * @Last Modified time: 03-06-2018 11:31:46
  */
 
 namespace DwPhp;
@@ -652,9 +652,9 @@ class Init{
 
 		if(reset($a)=='helpers'){
 			array_shift($a);
-			$helpers=true;
+			$this->setHelpers(true);
 		}else{
-			$helpers=false;
+			$this->setHelpers(false);
 		}
 		$this->setPathURI($a);
 
@@ -667,21 +667,20 @@ class Init{
 
 		$directory_action=$directory_ctrl=$directory_view='';
 
-		if($helpers==true){
-
+		if($this->getHelpers()==true){
 			$directory_action = $this->getPathApplication().'helpers';
-
 			do{
 				if( in_array(current($url_array), scandir($directory_action))){
 					$directory_action.='/'.current($url_array);
 					next($url_array);
 					$dir = false;
-					if(isset($url_array[key($url_array)+1])){
-						$this->setMethodsURI($url_array[key($url_array)+1]);
-					}
+
 				}else if( in_array(current($url_array).'.php', scandir($directory_action))){
 					$directory_action.='/'.current($url_array).'.php';
 					next($url_array);
+					if(isset($url_array[key($url_array)])){
+						$this->setMethodsURI($url_array[key($url_array)]);
+					}
 					$dir = true;
 				}else{
 					$directory_action.='/index.php';
@@ -690,7 +689,7 @@ class Init{
 			}while(!$dir);
 		}else{
 			$directory_ctrl = $this->getPathApplication().'controllers';
-			$directory_view = $this->getPathApplication().'views/pages/default/';
+			$directory_view = $this->getPathApplication().'views/pages/default';
 			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
 			do{
 				if( (file_exists($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
@@ -725,16 +724,18 @@ class Init{
 				}
 
 			}while(!$dir);
+
 		}
 
 		//verifica se existe a view
-		if($helpers==true && file_exists($directory_action) && is_file($directory_action) ){
+		if($this->getHelpers()==true && file_exists($directory_action) && is_file($directory_action) ){
 			// inicia actoin
 			$this->setPageAction($directory_action);
-			$this->instanceTemplate($this->getPageAction());
-			if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) {
+			if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) {	
+				$this->instanceTemplate($this->getPageAction());
 			}else{
-				$helpers=false;
+				http_response_code(505);
+				$this->setHelpers(false);
 				$this->setPageView($this->getPathApplication('views/error/','404.php'));
 			}
 		}else if((file_exists($directory_ctrl) && is_file($directory_ctrl)) || (file_exists($directory_view) && is_file($directory_view))){
@@ -749,7 +750,7 @@ class Init{
 			$this->setPageView($this->getPathApplication('views/error/','404.php'));
 		}
 
-		if($helpers==false){
+		if($this->getHelpers()==false){
 			$this->instanceTemplate($this->getPathApplication('views/layout/','template.php'));
 		}
 
@@ -819,14 +820,15 @@ class Init{
 			if(class_exists('App\\template', true)){
 				$n='App\template';
 				$this->template = new $n($this);
+				
 				if(file_exists($this->getpageCtrl())){
 					require_once $this->getpageCtrl();
 					if(class_exists('\App\Framework\controller', false)){
 						$this->controller = new \App\Framework\controller($this);
 						if($this->getMethodsURI()!=''){
 							if(method_exists($this->controller,$this->getMethodsURI())){
-								$methods_action=$this->getMethodsURI();
-								$this->controller->$methods_action();
+								$methodsAction=$this->getMethodsURI();
+								$this->controller->$methodsAction();
 							}
 						}
 						if(method_exists($this->controller,'show')){
@@ -842,7 +844,7 @@ class Init{
 									throw new \Exception(utf8_decode("Não foi encontrada a função " . $function . " no controller " . $this->getPageCtrl()));
 								}
 							}catch(\Exception $e){
-								$this->notificationErrors('Funcção não encontrada:' ,$e->getMessage()); exit;
+								$this->notificationErrors('Função não encontrada:' ,$e->getMessage()); exit;
 							}
 						}
 					}
@@ -856,6 +858,24 @@ class Init{
 					}
 				} catch (Exception $e) {
 					$this->notificationErrors('Não inciado constructPage', $e->getMessage()); exit;
+				}
+			}else if(class_exists('App\\Helpers\\Ajax\\Main', true)){
+
+				$n='App\\Helpers\\Ajax\\Main';
+				$this->action = new $n($this);
+				if($this->getMethodsURI()!=''){
+					$GLOBALS['f'] = $this;
+					header('Cache-Control: no-cache, must-revalidate');
+					header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+					header('Content-type: application/json');
+					
+					if(method_exists($this->action,$this->getMethodsURI())){
+						$methodsAction=$this->getMethodsURI();
+						http_response_code(200);
+						$this->action->$methodsAction();
+					}else{
+						http_response_code(404);
+					}
 				}
 			}else if(class_exists('App\\action', true)){
 				$n='App\action';
@@ -1203,6 +1223,16 @@ class Init{
 
     public function setLimitDataLoadPage($limitDataLoadPage){
         $this->limitDataLoadPage = (int)$limitDataLoadPage;
+
+        return $this;
+    }
+
+	public function getHelpers(){
+        return $this->helpers;
+    }
+
+    public function setHelpers($helpers){
+        $this->helpers = (boolean)$helpers;
 
         return $this;
     }
