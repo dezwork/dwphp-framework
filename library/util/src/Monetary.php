@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 10-04-2018 17:41:27
+ * @Last Modified time: 25-06-2018 17:17:11
  */
 namespace util;
 use Money\Currency;
@@ -63,10 +63,15 @@ class Monetary{
         return $this->getMoney();
     }
 
-
     public function moneyDb(){
         $number=($this->getMoney()->getAmount());
-        $number=substr($number, 0, -2).'.'.str_pad(substr($number,-2), 2, '0', STR_PAD_LEFT);
+        $numberTmp = str_replace('-', '', $number);
+        if(strlen($numberTmp) >= 2){
+            $number=substr($number, 0, -2).'.'.str_pad(substr($number,-2), 2, '0', STR_PAD_LEFT);
+        }else{
+            $number=substr($number, 0, -1).'.'.str_pad(substr($number,-1), 2, '0', STR_PAD_LEFT);
+        }
+
         return number_format($number, 2, '.', '');
     }
 
