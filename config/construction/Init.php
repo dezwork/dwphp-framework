@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 03-06-2018 11:31:46
+ * @Last Modified time: 28-06-2018 15:01:49
  */
 
 namespace DwPhp;
@@ -537,7 +537,7 @@ class Init{
 			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
-		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri());
+		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').str_replace('www.','',$this->getAddressUri()));
 
 		$tmp=explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
 
