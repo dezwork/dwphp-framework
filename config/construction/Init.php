@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 29-06-2018 14:05:01
+ * @Last Modified time: 29-06-2018 14:18:46
  */
 
 namespace DwPhp;
@@ -328,7 +328,7 @@ class Init{
 
 
 
-		$this->setAddressUri(str_replace('www.', '', $c['address_uri']));
+		$this->setAddressUri($c['address_uri']);
 		$this->setUseHttps($c['use_https']);
 
 		if($c['use_www']!='On' && $c['use_www']!='Off' && substr($_SERVER['HTTP_HOST'], 0,4)=='www.'){
@@ -539,7 +539,7 @@ class Init{
 			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
-		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri());
+		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').str_replace('www.','',$this->getAddressUri()));
 
 		$tmp=explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
 
@@ -555,7 +555,7 @@ class Init{
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
-               header('Location: '.($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri()); exit;
+               header( 'Location: '.$this->getPathBaseHref() ); exit;
             }
         }
 
