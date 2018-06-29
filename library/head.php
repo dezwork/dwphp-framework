@@ -3,28 +3,28 @@
 /**
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-13 20:18:42
+ * @Last Modified by:   Cleber
+ * @Last Modified time: 11-05-2018 08:56:43
  */
 
 namespace DwPhp\Library;
 
 /**
   Class for define metatags e configurations html.
-  Essa classe tem como principio definir as meta tags e configurações da pagina html.
+  Essa classe tem como principio definir as meta tags e configuraï¿½ï¿½es da pagina html.
 */
 
 class head{
         /* url base do site. */
         private $base               =   ""; // https://dezwork.com
-        /* configurações para site responsive. */
+        /* configuraï¿½ï¿½es para site responsive. */
         private $viewport           =   "width=device-width, initial-scale=1.0, maximum-scale=1.0";
 
         /* Define o nome do autor da pagina. */
         private $metaAuthor         =   ""; // Cleber Bieleski
 
         /* Declara o direito autoral da pagina. */
-        private  $metaCopyright     =   ""; // © 2017 Dezwork Digital LTDA
+        private  $metaCopyright     =   ""; //  2017 Dezwork Digital LTDA
 
         /* Contem uma descricao da pagina sobre o conteudo da pagina. */
         private  $metaDescription   =   ""; // descricao da pagina..
@@ -57,13 +57,13 @@ class head{
 
         // Declara a uma ou mais linguagens do documento. Pode ser usada pelos motores de busca para categorizar a pagina por idioma.
         /*
-        pt Português
-        pt-br Português do Brasil
-        en Inglês
-        en-us Inglês dos EUA
-        en-gb Inglês Britânico
-        fr Francês
-        de Alemão
+        pt PortuguÃªs
+        pt-br PortuguÃªs do Brasil
+        en InglÃªs
+        en-us InglÃªs dos EUA
+        en-gb InglÃªs BritÃ¢nico
+        fr FrancÃªs
+        de AlemÃ£o
         es Espanhol
         it Italiano 
         */ 
@@ -135,8 +135,11 @@ class head{
         /* URL do documento.   */
         private  $metaDCIdentifier          =   ""; // http://dezwork.com
 
-        /* Determina o favicon do projeto*/
+        /* Determina a imagem do projeto*/
         private  $ogImage                 = "";
+
+        /* Determina o favicon do projeto*/
+        private  $favicon                 = "";
 
         /* Determina as tags de remarketing do projeto*/
         private  $tagsRemarketing         = "";
@@ -237,6 +240,9 @@ class head{
 
         if($this->getOgImage()!='')
             $ret .= '<meta property="og:image" content="'.$this->getOgImage().'">'."\n";
+
+        if($this->getFavicon()!='')
+            $ret .= '<link rel="icon" type="image/png"  href="'.$this->getFavicon().'">'."\n";
 
         if($this->getTagsRemarketing()!='')
             $ret .= $this->getTagsRemarketing()."\n";
@@ -693,6 +699,21 @@ class head{
      */
     public function setOgImage($ogImage){
         $this->ogImage = $ogImage;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFavicon(){
+        return $this->favicon;
+    }
+
+    /**
+     * @return self
+     */
+    public function setFavicon($favicon){
+        $this->favicon = $favicon;
         return $this;
     }
 
