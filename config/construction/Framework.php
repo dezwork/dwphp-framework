@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 13-04-2018 15:07:19
+ * @Last Modified time: 20-04-2018 09:36:07
  */
 	namespace DwPhp;
 	use App\Framework\controller;
@@ -35,12 +35,10 @@
 		*/
 		final public function constructPage(){
 			$f = &$GLOBALS['f'];
-			$GLOBALS['f']->setPageView(str_replace('/views/pages/default/', '/views/pages/'.$f->template->getTemplate().'/',$f->getPageView()));
-			$baseFiles=$GLOBALS['f']->getPathApplication('views/layout/'.$f->template->getTemplate().'/_init.php');
 
-
+			$baseFiles=$GLOBALS['f']->getPathApplication('views/layout/',$this->getTemplate().'/_init.php');
 			if(!file_exists($baseFiles)){
-				throw new Exception("Não encontrado: ".$f->getPathApplication('views/layout/',$f->template->getTemplate().'/_init.php'));
+				throw new Exception("Não encontrado: ".$GLOBALS['f']->getPathApplication('views/layout/',$this->getTemplate().'/_init.php'));
 			}
 			$this->showHTML($baseFiles);
 			echo $this->HTMLaddFooter();
@@ -51,17 +49,6 @@
 			return $this->template;
 		}
 		public function setTemplate($template){
-			$f = &$GLOBALS['f'];
-
-			$pagesPath = str_replace('/views/pages/default/', '/views/pages/'.$template.'/',$f->getPageView());
-			$baseFiles = $f->getPathApplication('views/layout/'.$template.'/_init.php');
-
-			if(!file_exists($pagesPath) || !file_exists($baseFiles)){
-				$template = 'default';
-			}else{
-				$GLOBALS['f']->setPageView($pagesPath);
-			}
-
 			$this->template = $template;
 			return $template;
 		}
