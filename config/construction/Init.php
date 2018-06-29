@@ -384,7 +384,7 @@ class Init{
 
 		if($this->getEnvironmentStatus() == 'production'){
 			$this->setDisplayErrors('Off');
-			$this->setErrorReporting(0);
+			$this->setErrorReporting('0');
 		}
 
 		// error log
