@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 28-06-2018 15:01:49
+ * @Last Modified time: 19-04-2018 21:19:32
  */
 
 namespace DwPhp;
@@ -20,7 +20,7 @@ use Monolog\Handler\FirePHPHandler;
  */
 class Init{
 	//variavel que determina se está desenvolvimento local, padrão true
-	//nome do projeto
+	//project name
 	public $projectName 	    =	'dwphp';
 	//production, staging, testing ou development
 	public $environmentStatus 	=	'';
@@ -105,6 +105,7 @@ class Init{
 	public  $methodsURI;
 
 	function __construct($type=''){
+
 		if($type=='test'){
 			return false;
 		}
@@ -167,7 +168,6 @@ class Init{
 		}else{
 			$this->setApplication($conf['application_src']);
 		}
-
 
 		//Get project name of file config.yml
 		if(isset($conf['project_name']) && !empty($conf['project_name'])){
@@ -242,102 +242,81 @@ class Init{
 				$addresUri = explode('/', $value['address_uri']);
                 if(!empty($addresUri[0]) && strpos($_SERVER['HTTP_HOST'] , $addresUri[0]) !== false ){
                 	$this->setEnvironmentStatus($key);
+
+                    if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
+                    	$dir_path = 'prod';
+                    }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
+                    	$dir_path = 'dev';
+                    	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
+                    		unlink(file_exists(PATH_ROOT.'/app/dev/'));
+                    	}
+                    }
+
+                	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
+                		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
+                			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
+                		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && file_exists(PATH_ROOT.'/app/prod/')){
+                			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
+                		}
+                	}
+                    $this->setApplicationPath('/app/'.$dir_path.'/'.$this->getApplicationName());
                     break;
                 }
             }
 
 		}
 
-		//define url atual caso não tenha nenhuma definida e seta production
-		if($this->getEnvironmentStatus()==''){
-			$this->setEnvironmentStatus('production');
-			$c['address_uri'] = $_SERVER['HTTP_HOST'];
-			if(substr($c['address_uri'], -1)!='/'){
-				$c['address_uri'].='/';
-			}
-		}
-
-		//define url atual caso não tenha nenhuma definida e seta production
-		if($this->getEnvironmentStatus()==''){
-		    $this->setEnvironmentStatus('production');
-		    $c['address_uri'] = $_SERVER['HTTP_HOST'];
-		    if(substr($c['address_uri'], 0,4)!='www.'){
-		            $c['address_uri'] = substr($_SERVER['HTTP_HOST'],4);
-		    }
-		    if(substr($c['address_uri'], -1)!='/'){
-		            $c['address_uri'].='/';
-		    }
-		}
-
-		if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
-        	$dir_path = 'prod';
-        }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
-        	$dir_path = 'dev';
-        	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
-        		unlink(file_exists(PATH_ROOT.'/app/dev/'));
-        	}
-        }
-
-    	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
-    		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
-    			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
-    		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && file_exists(PATH_ROOT.'/app/prod/')){
-    			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
-    		}
-    	}
-        $this->setApplicationPath('/app/'.$dir_path.'/'.$this->getApplicationName());
-
 
 		//Get address_uri of file app_config.yml
 		if($this->getEnvironmentStatus()=='production'){
 			if(isset($app_config[$this->getNameApplication()]['production'])){
 				$c=$app_config[$this->getNameApplication()]['production'];
+				$this->setAddressUri($c['address_uri']);
+				$this->setUseHttps($c['use_https']);
+				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='staging'){
 			if(isset($app_config[$this->getNameApplication()]['staging'])){
 				$c=$app_config[$this->getNameApplication()]['staging'];
+				$this->setAddressUri($c['address_uri']);
+				$this->setUseHttps($c['use_https']);
+				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='testing'){
 			if(isset($app_config[$this->getNameApplication()]['testing'])){
 				$c=$app_config[$this->getNameApplication()]['testing'];
+				$this->setAddressUri($c['address_uri']);
+				$this->setUseHttps($c['use_https']);
+				$this->setUseWww($c['use_www']);
 			}
 		}else if($this->getEnvironmentStatus()=='development'){
 			if(isset($app_config[$this->getNameApplication()]['development'])){
 				$c=$app_config[$this->getNameApplication()]['development'];
+				$this->setAddressUri($c['address_uri']);
+				$this->setUseHttps($c['use_https']);
+				$this->setUseWww($c['use_www']);
 			}
 		}
 
-		if(strpos($c['address_uri'], '/')){
-			$search = explode('/', $c['address_uri']);
-			$search = $search[0];
-		}else{
-			$search = $c['address_uri'];
-		}
 
-		if($_SERVER['HTTP_HOST']!=$search){
-			if(strpos($_SERVER['HTTP_HOST'], $search)!==false){
-				$t = explode($search, $_SERVER['HTTP_HOST']);
-				$c['address_uri'] = $t[0].$c['address_uri'];
-			}else{
-				$c['address_uri'] = $_SERVER['HTTP_HOST'];
+		//Get address_uri of file app_config.yml
+		if($this->getEnvironmentStatus()=='production'){
+			if(isset($app_config['address_uri_production'])){
+				$this->setAddressUri($app_config['address_uri_production']);
+			}
+		}else if($this->getEnvironmentStatus()=='staging'){
+			if(isset($app_config['address_uri_staging'])){
+				$this->setAddressUri($app_config['address_uri_staging']);
+			}
+		}else if($this->getEnvironmentStatus()=='testing'){
+			if(isset($app_config['address_uri_testing'])){
+				$this->setAddressUri($app_config['address_uri_testing']);
+			}
+		}else if($this->getEnvironmentStatus()=='development'){
+			if(isset($app_config['address_uri_development'])){
+				$this->setAddressUri($app_config['address_uri_development']);
 			}
 		}
-		if(substr($c['address_uri'], -1)!='/'){
-			$c['address_uri'].='/';
-		}
-
-
-
-		$this->setAddressUri($c['address_uri']);
-		$this->setUseHttps($c['use_https']);
-
-		if($c['use_www']!='On' && $c['use_www']!='Off' && substr($_SERVER['HTTP_HOST'], 0,4)=='www.'){
-			$c['use_www']='On';
-		}else{
-			$c['use_www']='Off';
-		}
-		$this->setUseWww($c['use_www']);
-
 
 		if($this->getAddressUri()==''){
 			throw new \Exception("Você deve definir uma url em address_uri_".$this->getEnvironmentStatus().' no arquivo de configuração do app_config.yml');
@@ -448,6 +427,7 @@ class Init{
 			}
 		}
 
+
 		/* Define o limitador de cache para 'private' */
 		if($this->getLocale()==''){
 			$this->setLocale('pt_BR');
@@ -524,22 +504,18 @@ class Init{
 	private function setSystemConfigsCurrentApplication(){
 		//verifica use_https
 		if($this->getUseHttps()!='On' && $this->getUseHttps()!='Off'){
-			if((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']=='https') || (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")){
-                $this->setUseHttps('On');
-            }else{
-                $this->setUseHttps('Off');
-            }
-        }
+			$this->setUseHttps('Off');
+		}
 		//verifica use_www
 		if($this->getUseWww()!='On' && $this->getUseWww()!='Off'){
 			$this->setUseWww('Off');
 		}
 		//verifica address_uri
-		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || (preg_match('/^www/', $this->getAddressUri())) && $this->getEnvironmentStatus()!='production' ){
+		if($this->getAddressUri()=='' || preg_match('/^http/', $this->getAddressUri()) || preg_match('/^www/', $this->getAddressUri())){
 			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
-		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').str_replace('www.','',$this->getAddressUri()));
+		$this->setPathBaseHref(($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri());
 
 		$tmp=explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
 
@@ -551,7 +527,7 @@ class Init{
 
         if($this->getUseHttps()=='On' || (preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='Off') || (!preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='On') || $k!=''){
             if(
-            	( (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!='https') || ((isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "on"))) || 
+            	(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
@@ -654,9 +630,9 @@ class Init{
 
 		if(reset($a)=='helpers'){
 			array_shift($a);
-			$this->setHelpers(true);
+			$helpers=true;
 		}else{
-			$this->setHelpers(false);
+			$helpers=false;
 		}
 		$this->setPathURI($a);
 
@@ -669,20 +645,21 @@ class Init{
 
 		$directory_action=$directory_ctrl=$directory_view='';
 
-		if($this->getHelpers()==true){
+		if($helpers==true){
+
 			$directory_action = $this->getPathApplication().'helpers';
+
 			do{
 				if( in_array(current($url_array), scandir($directory_action))){
 					$directory_action.='/'.current($url_array);
 					next($url_array);
 					$dir = false;
-
+					if(isset($url_array[key($url_array)+1])){
+						$this->setMethodsURI($url_array[key($url_array)+1]);
+					}
 				}else if( in_array(current($url_array).'.php', scandir($directory_action))){
 					$directory_action.='/'.current($url_array).'.php';
 					next($url_array);
-					if(isset($url_array[key($url_array)])){
-						$this->setMethodsURI($url_array[key($url_array)]);
-					}
 					$dir = true;
 				}else{
 					$directory_action.='/index.php';
@@ -691,7 +668,7 @@ class Init{
 			}while(!$dir);
 		}else{
 			$directory_ctrl = $this->getPathApplication().'controllers';
-			$directory_view = $this->getPathApplication().'views/pages/default';
+			$directory_view = $this->getPathApplication().'views/pages';
 			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
 			do{
 				if( (file_exists($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
@@ -726,18 +703,16 @@ class Init{
 				}
 
 			}while(!$dir);
-
 		}
 
 		//verifica se existe a view
-		if($this->getHelpers()==true && file_exists($directory_action) && is_file($directory_action) ){
+		if($helpers==true && file_exists($directory_action) && is_file($directory_action) ){
 			// inicia actoin
 			$this->setPageAction($directory_action);
-			if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) {	
-				$this->instanceTemplate($this->getPageAction());
+			$this->instanceTemplate($this->getPageAction());
+			if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) {
 			}else{
-				http_response_code(505);
-				$this->setHelpers(false);
+				$helpers=false;
 				$this->setPageView($this->getPathApplication('views/error/','404.php'));
 			}
 		}else if((file_exists($directory_ctrl) && is_file($directory_ctrl)) || (file_exists($directory_view) && is_file($directory_view))){
@@ -752,7 +727,7 @@ class Init{
 			$this->setPageView($this->getPathApplication('views/error/','404.php'));
 		}
 
-		if($this->getHelpers()==false){
+		if($helpers==false){
 			$this->instanceTemplate($this->getPathApplication('views/layout/','template.php'));
 		}
 
@@ -763,8 +738,8 @@ class Init{
 		if($this->getLimitDataLoadPage()!=0){
 			$text='';
 			$addLine=true;
-			if(file_exists(PATH_ROOT."/storage/log/loadpage.log")){
-				$f=fopen(PATH_ROOT."/storage/log/loadpage.log","r+");
+			if(file_exists(PATH_ROOT."/dwphp/storage/log/loadpage.log")){
+				$f=fopen(PATH_ROOT."/dwphp/storage/log/loadpage.log","r+");
 				while (!feof($f)) {
 					//pega conteudo da linha
 					$line=fgets($f);
@@ -822,15 +797,14 @@ class Init{
 			if(class_exists('App\\template', true)){
 				$n='App\template';
 				$this->template = new $n($this);
-				
 				if(file_exists($this->getpageCtrl())){
 					require_once $this->getpageCtrl();
 					if(class_exists('\App\Framework\controller', false)){
 						$this->controller = new \App\Framework\controller($this);
 						if($this->getMethodsURI()!=''){
 							if(method_exists($this->controller,$this->getMethodsURI())){
-								$methodsAction=$this->getMethodsURI();
-								$this->controller->$methodsAction();
+								$methods_action=$this->getMethodsURI();
+								$this->controller->$methods_action();
 							}
 						}
 						if(method_exists($this->controller,'show')){
@@ -846,7 +820,7 @@ class Init{
 									throw new \Exception(utf8_decode("Não foi encontrada a função " . $function . " no controller " . $this->getPageCtrl()));
 								}
 							}catch(\Exception $e){
-								$this->notificationErrors('Função não encontrada:' ,$e->getMessage()); exit;
+								$this->notificationErrors('Funcção não encontrada:' ,$e->getMessage()); exit;
 							}
 						}
 					}
@@ -860,24 +834,6 @@ class Init{
 					}
 				} catch (Exception $e) {
 					$this->notificationErrors('Não inciado constructPage', $e->getMessage()); exit;
-				}
-			}else if(class_exists('App\\Helpers\\Ajax\\Main', true)){
-
-				$n='App\\Helpers\\Ajax\\Main';
-				$this->action = new $n($this);
-				if($this->getMethodsURI()!=''){
-					$GLOBALS['f'] = $this;
-					header('Cache-Control: no-cache, must-revalidate');
-					header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-					header('Content-type: application/json');
-					
-					if(method_exists($this->action,$this->getMethodsURI())){
-						$methodsAction=$this->getMethodsURI();
-						http_response_code(200);
-						$this->action->$methodsAction();
-					}else{
-						http_response_code(404);
-					}
 				}
 			}else if(class_exists('App\\action', true)){
 				$n='App\action';
@@ -1225,16 +1181,6 @@ class Init{
 
     public function setLimitDataLoadPage($limitDataLoadPage){
         $this->limitDataLoadPage = (int)$limitDataLoadPage;
-
-        return $this;
-    }
-
-	public function getHelpers(){
-        return $this->helpers;
-    }
-
-    public function setHelpers($helpers){
-        $this->helpers = (boolean)$helpers;
 
         return $this;
     }
