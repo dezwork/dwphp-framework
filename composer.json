@@ -18,7 +18,8 @@
         "php": "^7",
         "symfony/yaml": "3.*",
         "moneyphp/money": "3.*",
-        "adodb/adodb-php": "5.*"
+        "adodb/adodb-php": "5.*",
+        "monolog/monolog": "1.*" 
     },
     "require-dev": {
         "mockery/mockery": "*",

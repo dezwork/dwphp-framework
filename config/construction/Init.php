@@ -9,12 +9,19 @@
 
 namespace DwPhp;
 use Symfony\Component\Yaml\Yaml;
+use Monolog\Logger;
+use Monolog\ErrorHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FirePHPHandler;
+
 /**
   Class for initialize.
   Essa classe tem como principio definir todas as variaveis e paths responsaveis pelo funcionamento do framework.
  */
 class Init{
 	//variavel que determina se está desenvolvimento local, padrão true
+	//nome do projeto
+	public $projectName 	    =	'dwphp';
 	//production, staging, testing ou development
 	public $environmentStatus 	=	'';
 	//array com todas as aplicações ativas no sistmas, por padrão já inicializa com default
@@ -162,6 +169,10 @@ class Init{
 		}
 
 
+		//Get project name of file config.yml
+		if(isset($conf['project_name']) && !empty($conf['project_name'])){
+			$this->setProjectName($conf['project_name']);
+		}
 		//Get display_errors of file config.yml
 		if(isset($conf['display_errors'])){
 			$this->setDisplayErrors($conf['display_errors']);
@@ -386,23 +397,15 @@ class Init{
 			ini_set('post_max_size',$this->getPostMaxSize());
 		}
 
-		//Set path for errors
-		if(!file_exists(PATH_ROOT.$this->getErrorLog()) || $this->getErrorLog()==''){
-			$difLog = explode('/',PATH_ROOT.$this->getErrorLog());
-			array_pop($difLog);
-			$difLog = implode('/', $difLog).'/';
-			if(!file_exists($difLog) || $difLog==''){
-				mkdir($difLog, 0777);
-			}else{
-				chmod($difLog, 0777);
-			}
-			$file = fopen(PATH_ROOT.$this->getErrorLog(), "w+") or die("Arquivo de log não pode ser aberto!");
-			chmod(PATH_ROOT.$this->getErrorLog(), 0777);
-			$txt = "Created: ".date('d-m-Y H:m:i')."\n";
-			fwrite($file, $txt);
-			fclose($file);
+		$log = new Logger($this->getProjectName());
+		ErrorHandler::register($log);
+		$log->pushHandler(new StreamHandler(PATH_ROOT.$this->getErrorLog(), Logger::DEBUG));
+		$log->pushHandler(new FirePHPHandler());
+
+		if($this->getEnvironmentStatus() == 'production'){
+			$this->setDisplayErrors('Off');
+			$this->setErrorReporting(0);
 		}
-		ini_set('error_log'	, 	PATH_ROOT.$this->getErrorLog());
 
 		// error log
 		if($this->getDisplayErrors()!='On' && $this->getDisplayErrors()!='Off' && $this->getDisplayErrors()!=''){
@@ -444,7 +447,6 @@ class Init{
 				default: error_reporting(0); break;
 			}
 		}
-
 
 		/* Define o limitador de cache para 'private' */
 		if($this->getLocale()==''){
@@ -1236,4 +1238,14 @@ class Init{
 
         return $this;
     }
+
+	public function getProjectName(){ 
+		return $this->projectName;
+	}
+
+	public function setProjectName($projectName){ 
+		$this->projectName = $projectName;
+
+		return $this;
+	}
 }
