@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 30-07-2018 07:38:25
+ * @Last Modified time: 30-07-2018 09:03:58
  */
 
 	namespace DwPhp\Library\models;
@@ -15,10 +15,10 @@
 		public function setCreateMethods($params=array()){
 			foreach ($params as $key => $value) {
 				if(is_int($key)){ continue; }
-				if(method_exists($this,'set'.ucfirst($key)) ){
-					eval('$this->set'.ucfirst($key).'($value);');
+				if(method_exists($this,'set'.ucfirst(strtolower($key))) ){
+					eval('$this->set'.ucfirst(strtolower($key)).'($value);');
 				}else{
-					throw new \Exception("Method <b>set".ucfirst($key)."()</b> is not found in <b>".get_class($this)."</b>");
+					throw new \Exception("Method <b>set".ucfirst(strtolower($key))."()</b> is not found in <b>".get_class($this)."</b>");
 				}
 			}
 		}

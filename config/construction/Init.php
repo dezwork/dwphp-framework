@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 29-06-2018 14:18:46
+ * @Last Modified time: 30-07-2018 09:02:02
  */
 
 namespace DwPhp;
@@ -372,9 +372,11 @@ class Init{
 		$dir_session = session_save_path();
 		if ($handle = opendir($dir_session)) {
 		  foreach (glob($dir_session."sess_*") as $filename) {
-		    if (filemtime($filename) + $this->getCacheExpire() < time()) {
-		      @unlink($filename);
-		    }
+		    if (file_exists($filename)) {
+			    if (filemtime($filename) + $this->getCacheExpire() < time()) {
+			      @unlink($filename);
+			    }
+		  	}
 		  }
 		}
 
@@ -694,7 +696,7 @@ class Init{
 			$directory_view = $this->getPathApplication().'views/pages/default';
 			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
 			do{
-				if( (file_exists($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
+				if( (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && is_dir($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
 					$directory_ctrl.='/'.current($url_array);
 					$directory_view.='/'.current($url_array);
 					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
@@ -703,7 +705,7 @@ class Init{
 					if(isset($url_array[key($url_array)])){
 						$this->setMethodsURI($url_array[key($url_array)]);
 					}
-				}else if( (file_exists($directory_view) && in_array(current($url_array).'.php', scandir($directory_view))) || (file_exists($directory_ctrl) && in_array(current($url_array).'.php', scandir($directory_ctrl))) ){
+				}else if( (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array).'.php', scandir($directory_view))) || (file_exists($directory_ctrl) && is_dir($directory_view)  &&  in_array(current($url_array).'.php', scandir($directory_ctrl))) ){
 					$directory_ctrl.='/'.current($url_array).'.php';
 					$directory_view.='/'.current($url_array).'.php';
 					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
