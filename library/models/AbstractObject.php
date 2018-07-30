@@ -4,7 +4,7 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 28-07-2018 16:51:17
+ * @Last Modified time: 30-07-2018 07:38:25
  */
 
 	namespace DwPhp\Library\models;
@@ -14,7 +14,8 @@
 		
 		public function setCreateMethods($params=array()){
 			foreach ($params as $key => $value) {
-				if( method_exists($this,'set'.ucfirst($key)) ){
+				if(is_int($key)){ continue; }
+				if(method_exists($this,'set'.ucfirst($key)) ){
 					eval('$this->set'.ucfirst($key).'($value);');
 				}else{
 					throw new \Exception("Method <b>set".ucfirst($key)."()</b> is not found in <b>".get_class($this)."</b>");
@@ -128,11 +129,15 @@
 	        return $this->getId();
 	    }
 
-    	public function delete($id){
+    	public function delete($id=0){
 	        $db = new sql();
-	        $db->setTable($this->dbTable);
-	        $db->setWhere(array('id' => $id));
-	        $db->Delete();
+			$db->setTable($this->dbTable);
+			if((int)$id!=0){
+	        	$db->setWhere(array('id' => $id));
+			}else{
+				$db->setWhere(array('id' => $this->getId()));
+			}
+			$db->Delete();
 
 	        $query = $db->getLastQuery();
 
