@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 30-07-2018 09:02:02
- */
-
 namespace DwPhp;
 use Symfony\Component\Yaml\Yaml;
 use Monolog\Logger;
@@ -331,12 +324,16 @@ class Init{
 		$this->setAddressUri($c['address_uri']);
 		$this->setUseHttps($c['use_https']);
 
-		if($c['use_www']!='On' && $c['use_www']!='Off' && substr($_SERVER['HTTP_HOST'], 0,4)=='www.'){
-			$c['use_www']='On';
-		}else{
-			$c['use_www']='Off';
+		if($c['use_www']!='On'){
+			if($c['use_www']!='Off' && substr($_SERVER['HTTP_HOST'], 0,4)=='www.'){
+				$c['use_www']='On';
+			}else{
+				$c['use_www']='Off';
+			}
 		}
+
 		$this->setUseWww($c['use_www']);
+
 
 
 		if($this->getAddressUri()==''){
