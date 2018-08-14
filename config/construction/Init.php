@@ -554,7 +554,7 @@ class Init{
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
-               header( 'Location: '.$this->getPathBaseHref() ); exit;
+               header( 'Location: '.$this->getPathBaseHref(). substr($_SERVER['REQUEST_URI'], 1) ); exit;
             }
         }
 
