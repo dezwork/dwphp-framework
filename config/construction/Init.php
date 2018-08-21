@@ -22,7 +22,7 @@ class Init{
 	//variavel que determina se está desenvolvimento local, padrão true
 	//nome do projeto
 	public $projectName 	    =	'dwphp';
-	//production, staging, testing ou development
+	//production, sandbox, staging, testing ou development
 	public $environmentStatus 	=	'';
 	//array com todas as aplicações ativas no sistmas, por padrão já inicializa com default
 	public $application 		=	array();
@@ -244,7 +244,7 @@ class Init{
                 if(!empty($addresUri[0]) && strpos($_SERVER['HTTP_HOST'] , $addresUri[0]) !== false ){
                 	$this->setEnvironmentStatus($key);
 
-                    if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging'){
+                    if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging' || $this->getEnvironmentStatus() == 'sandbox'){
                     	$dir_path = 'prod';
                     }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
                     	$dir_path = 'dev';
@@ -256,7 +256,7 @@ class Init{
                 	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
                 		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
                 			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
-                		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && file_exists(PATH_ROOT.'/app/prod/')){
+                		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && $this->getEnvironmentStatus() != 'sandbox' && file_exists(PATH_ROOT.'/app/prod/')){
                 			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
                 		}
                 	}
@@ -272,6 +272,13 @@ class Init{
 		if($this->getEnvironmentStatus()=='production'){
 			if(isset($app_config[$this->getNameApplication()]['production'])){
 				$c=$app_config[$this->getNameApplication()]['production'];
+				$this->setAddressUri($c['address_uri']);
+				$this->setUseHttps($c['use_https']);
+				$this->setUseWww($c['use_www']);
+			}
+		}else if($this->getEnvironmentStatus()=='sandbox'){
+			if(isset($app_config[$this->getNameApplication()]['sandbox'])){
+				$c=$app_config[$this->getNameApplication()]['sandbox'];
 				$this->setAddressUri($c['address_uri']);
 				$this->setUseHttps($c['use_https']);
 				$this->setUseWww($c['use_www']);
@@ -304,6 +311,10 @@ class Init{
 		if($this->getEnvironmentStatus()=='production'){
 			if(isset($app_config['address_uri_production'])){
 				$this->setAddressUri($app_config['address_uri_production']);
+			}
+		}else if($this->getEnvironmentStatus()=='sandbox'){
+			if(isset($app_config['address_uri_sandbox'])){
+				$this->setAddressUri($app_config['address_uri_sandbox']);
 			}
 		}else if($this->getEnvironmentStatus()=='staging'){
 			if(isset($app_config['address_uri_staging'])){
@@ -382,7 +393,7 @@ class Init{
 		$log->pushHandler(new StreamHandler(PATH_ROOT.$this->getErrorLog(), Logger::DEBUG));
 		$log->pushHandler(new FirePHPHandler());
 
-		if($this->getEnvironmentStatus() == 'production'){
+		if($this->getEnvironmentStatus() == 'production' || $this->getEnvironmentStatus() == 'sandbox'){
 			$this->setDisplayErrors('Off');
 			$this->setErrorReporting('0');
 		}
@@ -472,6 +483,10 @@ class Init{
 		if($this->getEnvironmentStatus()=='production'){
 			if(isset($app_config[$this->getNameApplication()]['db_production'])){
 				$this->setDbConfig($app_config[$this->getNameApplication()]['db_production']);
+			}
+		}else if($this->getEnvironmentStatus()=='sandbox'){
+			if(isset($app_config[$this->getNameApplication()]['db_sandbox'])){
+				$this->setDbConfig($app_config[$this->getNameApplication()]['db_sandbox']);
 			}
 		}else if($this->getEnvironmentStatus()=='staging'){
 			if(isset($app_config[$this->getNameApplication()]['db_staging'])){
