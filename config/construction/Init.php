@@ -362,7 +362,9 @@ class Init{
 		session_cache_expire((empty($this->getCacheExpire())?1000:$this->getCacheExpire()));
 		session_save_path(PATH_ROOT.$this->getSessionSavePath());
 
-		session_start();
+		if(!isset($_SESSION)){
+			session_start();
+		}
 		ob_start();
 
 
