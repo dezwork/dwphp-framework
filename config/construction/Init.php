@@ -710,7 +710,7 @@ class Init{
 						$this->setMethodsURI($url_array[key($url_array)]);
 					}
 
-					if((count($url_array)==0 || is_int(key($url_array)) == false) || (isset($url_array) && $url_array[0]=='')){
+					if((count($url_array)==0 || is_int(key($url_array)) == false) || (isset($url_array) && isset($url_array[0]) && $url_array[0]=='')){
 						$directory_ctrl.='/index.php';
 						$directory_view.='/index.php';
 						$this->urlCompletePath.='/';
