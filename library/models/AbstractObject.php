@@ -17,8 +17,6 @@
 				if(is_int($key)){ continue; }
 				if(method_exists($this,'set'.ucfirst(strtolower($key))) ){
 					eval('$this->set'.ucfirst(strtolower($key)).'($value);');
-				}else{
-					throw new \Exception("Method <b>set".ucfirst(strtolower($key))."()</b> is not found in <b>".get_class($this)."</b>");
 				}
 			}
 		}
