@@ -1,0 +1,49 @@
+Arrays
+ [x] Fast array unique
+ [x] Array get
+ [x] Is assoc array
+ [x] Is numeric array
+ [x] Array first
+ [x] Array first key
+ [x] Array last
+ [x] Array last key
+ [x] Array flatten
+ [x] Array pluck
+ [x] Array search deep
+ [x] Array map deep
+ [x] Array merge deep
+ [x] Array clean
+
+DateTime
+ [x] Date b r
+ [x] Sub year
+ [x] Add year
+
+HumanizeBR
+ [x] Number to words
+ [x] Human time diff
+
+Mask
+ [x] Mask
+ [x] Mask factory
+ [x] Unmask
+
+Measures
+ [x] Size format
+ [x] Convert memory size
+
+Monetary
+ [x] New
+ [x] Add
+ [x] Subtract
+ [x] Multiply
+ [x] Divide
+ [x] Money db
+ [x] Money db negative
+ [x] Money b r
+ [x] Money u s
+ [x] Percentage
+
+Server
+ [x] Is https
+

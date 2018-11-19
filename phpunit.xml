@@ -32,8 +32,8 @@
         </exclude>
     </groups>
     <logging>
-    <!--    <log type="testdox-text" target="library/util/tests/_reports/testdox.txt"/> -->
-    <!--    <log type="testdox-html" target="library/util/tests/_reports/testdox.html"/> -->
-    <!--    <log type="coverage-html" target="coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="45" highLowerBound="85" /> -->
+    <log type="testdox-text" target="library/util/tests/_reports/testdox.txt"/>
+    <log type="testdox-html" target="library/util/tests/_reports/testdox.html"/>
+    <log type="coverage-html" target="coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="45" highLowerBound="85" />
     </logging>
 </phpunit>

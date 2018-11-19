@@ -11,13 +11,13 @@ namespace DwPhp\Library;
 
 /**
   Class for define metatags e configurations html.
-  Essa classe tem como principio definir as meta tags e configura��es da pagina html.
+  Essa classe tem como principio definir as meta tags e configurações da pagina html.
 */
 
 class head{
         /* url base do site. */
         private $base               =   ""; // https://dezwork.com
-        /* configura��es para site responsive. */
+        /* configurações para site responsive. */
         private $viewport           =   "width=device-width, initial-scale=1.0, maximum-scale=1.0";
 
         /* Define o nome do autor da pagina. */
@@ -244,15 +244,19 @@ class head{
         if($this->getFavicon()!='')
             $ret .= '<link rel="icon" type="image/png"  href="'.$this->getFavicon().'">'."\n";
 
+        return $ret;
+    }
+    public function printHeadEnd(){
+        $ret =  '';
         if($this->getTagsRemarketing()!='')
-            $ret .= $this->getTagsRemarketing()."\n";
+            $ret = $this->getTagsRemarketing()."\n";
 
         if($this->getTagGoogleAnalytics()!='')
             $ret .= $this->getTagGoogleAnalytics()."\n";
 
         if($this->getTagsPersonalize()!='')
             $ret .= $this->getTagsPersonalize()."\n";
-
+        
         return $ret;
     }
 
