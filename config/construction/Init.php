@@ -704,7 +704,7 @@ class Init{
 					if(isset($url_array[key($url_array)])){
 						$this->setMethodsURI($url_array[key($url_array)]);
 					}
-				}else if( (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array).'.php', scandir($directory_view))) || (file_exists($directory_ctrl) && is_dir($directory_view)  &&  in_array(current($url_array).'.php', scandir($directory_ctrl))) ){
+				}else if( (file_exists($directory_ctrl) && is_dir($directory_ctrl) &&  in_array(current($url_array).'.php', scandir($directory_ctrl))) || (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array).'.php', scandir($directory_view)))){
 					$directory_ctrl.='/'.current($url_array).'.php';
 					$directory_view.='/'.current($url_array).'.php';
 					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
