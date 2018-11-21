@@ -363,7 +363,7 @@ class Init{
 		$dir_session = session_save_path();
 		if ($handle = opendir($dir_session)) {
 		  foreach (glob($dir_session."sess_*") as $filename) {
-		    if (filemtime($filename) + $this->getCacheExpire() < time()) {
+		    if (file_exists($filename) && is_file($filename) && filemtime($filename) + $this->getCacheExpire() < time()) {
 		      @unlink($filename);
 		    }
 		  }
