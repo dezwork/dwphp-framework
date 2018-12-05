@@ -85,8 +85,8 @@
 			}
 			if(isset($this->filesScripts['end']) && is_array($this->filesScripts['end'])){
 				// unique keys in array
-				$tmp=$this->filesLinks['end'];
-				foreach ($this->filesLinks['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				$tmp=$this->filesScripts['end'];
+				foreach ($this->filesScripts['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			return $this->filesScripts;
 		}
