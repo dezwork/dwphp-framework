@@ -12,11 +12,12 @@
 	
 	abstract class AbstractObject{
 		
-		public function setCreateMethods($params=array()){
-			foreach ($params as $key => $value) {
-				if(is_int($key)){ continue; }
-				if(method_exists($this,'set'.ucfirst(strtolower($key))) ){
-					eval('$this->set'.ucfirst(strtolower($key)).'($value);');
+		public function setCreateMethods($params = []) {
+			foreach ($params as $property => $value) {
+				if (is_int($property)) { continue; }
+				$method = 'set' . ucfirst(strtolower($property));
+				if (method_exists($this, $method)) {
+					$this->$method($value);
 				}
 			}
 		}
