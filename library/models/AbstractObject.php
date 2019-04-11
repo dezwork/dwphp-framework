@@ -10,13 +10,21 @@
 	namespace DwPhp\Library\models;
 	use DwPhp\Library\sql;
 	
-	abstract class AbstractObject{
+	abstract class AbstractObject {
+
+		public function __construct($params = null) {
+			$this->setDbTable($this->getNameTable());
+			if ($params !== null) {
+				$this->setCreateMethods($params);
+			}
+		}
 		
-		public function setCreateMethods($params=array()){
-			foreach ($params as $key => $value) {
-				if(is_int($key)){ continue; }
-				if(method_exists($this,'set'.ucfirst(strtolower($key))) ){
-					eval('$this->set'.ucfirst(strtolower($key)).'($value);');
+		public function setCreateMethods($params = []) {
+			foreach ($params as $property => $value) {
+				if (is_int($property)) { continue; }
+				$method = 'set' . ucfirst(strtolower($property));
+				if (method_exists($this, $method)) {
+					$this->$method($value);
 				}
 			}
 		}
@@ -156,6 +164,14 @@
 	        $this->dbTable = $dbTable;
 
 	        return $this;
-	    }
+		}
+		
+		public function toArray() {
+			return get_object_vars($this);
+		}
+
+		public function __toString() {
+			return json_encode($this->toArray(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		}
 	}
 ?>
