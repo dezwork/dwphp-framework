@@ -10,7 +10,14 @@
 	namespace DwPhp\Library\models;
 	use DwPhp\Library\sql;
 	
-	abstract class AbstractObject{
+	abstract class AbstractObject {
+
+		public function __construct($params = null) {
+			$this->setDbTable($this->getNameTable());
+			if ($params !== null) {
+				$this->setCreateMethods($params);
+			}
+		}
 		
 		public function setCreateMethods($params = []) {
 			foreach ($params as $property => $value) {
