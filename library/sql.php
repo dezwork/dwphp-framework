@@ -43,6 +43,8 @@ namespace DwPhp\Library;
 */
 	class sql{
 
+		const MYSQL_CONSTANTS = ['CURRENT_TIMESTAMP'];
+
 		private $insertId;
 		private $table;
 		private $fields;
@@ -266,7 +268,7 @@ namespace DwPhp\Library;
 	        		$q='';
 	        		if(count($v)>0){
 	        			foreach($v as $key=>$value){
-			            	$q.= "`{$key}` = '{$value}', ";
+			            	$q.= "`{$key}` = " . (in_array($value, self::MYSQL_CONSTANTS) ? $value : "'{$value}'") . ', ';
 		        		}
 		        		$q=substr($q, 0, -2);
 		        	}
