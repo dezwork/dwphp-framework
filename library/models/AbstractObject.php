@@ -4,13 +4,30 @@
  * @Author: Cleberson Bieleski
  * @Date:   2017-12-23 04:54:45
  * @Last Modified by:   Cleber
- * @Last Modified time: 19-04-2018 21:41:46
+ * @Last Modified time: 30-07-2018 09:03:58
  */
 
 	namespace DwPhp\Library\models;
 	use DwPhp\Library\sql;
+	
+	abstract class AbstractObject {
 
-	abstract class AbstractObject{
+		public function __construct($params = null) {
+			$this->setDbTable($this->getNameTable());
+			if ($params !== null) {
+				$this->setCreateMethods($params);
+			}
+		}
+		
+		public function setCreateMethods($params = []) {
+			foreach ($params as $property => $value) {
+				if (is_int($property)) { continue; }
+				$method = 'set' . ucfirst(strtolower($property));
+				if (method_exists($this, $method)) {
+					$this->$method($value);
+				}
+			}
+		}
 
 		public function getNum(){
 	        $db = new sql();
@@ -31,19 +48,14 @@
 	        if(!empty($order)){
 	            $db->setOrderBy($order);
 	        }
-
 	        if(!empty($limit)){
 	            $db->setLimit($limit);
 	        }
-
 	        if(count($search) > 0){
 	            $where = $this->getSearchQuery($db->getWhere(), $search);
-
 	            $db->setWhere($where);
 	        }
-
 	        $db->Select();
-
 	        $child = get_called_class();
 
 	        $return = array();
@@ -85,53 +97,36 @@
 	    }
 
     	public function insert($debug = false){
-	        $db = new sql();
 
 	        $params_tmp = get_object_vars($this);
-	        unset($params_tmp['dbTable']);
-	        unset($params_tmp['dateUpdate']);
-	        unset($params_tmp['userUpdate']);
+	        if(isset($params_tmp['dbTable'])){ unset($params_tmp['dbTable']);}
+	        if(isset($params_tmp['dateUpdate'])){ unset($params_tmp['dateUpdate']);}
+	        if(isset($params_tmp['userUpdate'])){ unset($params_tmp['userUpdate']);}
 
-	        $params_tmp = array_filter($params_tmp, function($var){ return !is_null($var);} );
+	        $params = array_filter($params_tmp, function($var){ return !is_null($var);} );
 
-	        $params = array();
-	        foreach($params_tmp as $i => $param){
-	            $i = systemFunctions::fromCamelCase($i);
-	            $params[$i] = $param;
-	        }
-
-	        if($debug === true){
-	            $db->setTest(true);
-	        }
+	        $db = new sql();
+	        $db->setTest($debug);
 	        $db->setTable($this->dbTable);
 	        $db->setSet($params);
 	        $db->Insert();
-
 	        $this->id = $db->getInsertId();
+
 	        return $this->id;
 	    }
 
 	    public function update($debug = false){
-	        $db = new sql();
 
 	        $params_tmp = get_object_vars($this);
 
-	        unset($params_tmp['dbTable']);
-	        unset($params_tmp['dateCreate']);
-	        unset($params_tmp['userCreate']);
+	        if(isset($params_tmp['dbTable'])){ unset($params_tmp['dbTable']);}
+	        if(isset($params_tmp['dateCreate'])){ unset($params_tmp['dateCreate']);}
+	        if(isset($params_tmp['userCreate'])){ unset($params_tmp['userCreate']);}
 
-	        // $params_tmp = array_diff($params_tmp, array(NULL));
-	        $params_tmp = array_filter($params_tmp, function($var){ return !is_null($var);} );
+			$params = array_filter($params_tmp, function($var){ return !is_null($var);} );
 
-	        $params = array();
-	        foreach($params_tmp as $i => $param){
-	            $i = systemFunctions::fromCamelCase($i);
-	            $params[$i] = $param;
-	        }
-
-	        if($debug === true){
-	            $db->setTest(true);
-	        }
+	        $db = new sql();
+	        $db->setTest($debug);
 	        $db->setTable($this->dbTable);
 	        $db->setSet($params);
 	        $db->setWhere(array('id' => $this->getId()));
@@ -140,28 +135,20 @@
 	        return $this->getId();
 	    }
 
-    	public function delete($id){
+    	public function delete($id=0){
 	        $db = new sql();
-
-	        $db->setTable($this->dbTable);
-	        $db->setWhere(array('id' => $id));
-	        $db->Delete();
+			$db->setTable($this->dbTable);
+			if((int)$id!=0){
+	        	$db->setWhere(array('id' => $id));
+			}else{
+				$db->setWhere(array('id' => $this->getId()));
+			}
+			$db->Delete();
 
 	        $query = $db->getLastQuery();
 
-	    //    $this->saveLog('DELETE', $query);
-
 	        return true;
 	    }
-
-	    //public function saveLog($action, $query){
-	    //	$logParams = array('action' => $action, 'query' => str_replace("'", '"', $query), 'owner' => $this->dbTable, 'date' => date("Y-m-d H:i:s"));
-	    //	if(isset($_SESSION['USER']['ID']) && !empty($_SESSION['USER']['ID']))
-	    //		$logParams['idUser'] = $_SESSION['USER']['ID'];
-	    //    $log = new Log();
-	    //    $log->insert($logParams);
-	    //}
-
 
 	    public function setId($id){
 	        $this->id = (int)$id;
@@ -177,6 +164,14 @@
 	        $this->dbTable = $dbTable;
 
 	        return $this;
-	    }
+		}
+		
+		public function toArray() {
+			return get_object_vars($this);
+		}
+
+		public function __toString() {
+			return json_encode($this->toArray(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		}
 	}
 ?>

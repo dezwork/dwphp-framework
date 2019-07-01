@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  * @Author: Cleberson Bieleski
  * @Date:   2018-03-14 15:52:50
  * @Last Modified by:   Cleber
- * @Last Modified time: 09-04-2018 10:23:22
+ * @Last Modified time: 25-06-2018 17:16:56
  */
 class MonetaryTest extends TestCase{
 
@@ -87,6 +87,19 @@ class MonetaryTest extends TestCase{
         $this->assertEquals( '123.45'   , (new Monetary('12345'))->moneyDb() );
         $this->assertEquals( '200.50'   , (new Monetary('20050'))->moneyDb() );
         $this->assertEquals( '87654.32' , (new Monetary('8765432'))->moneyDb() );
+    }
+
+    /**
+    * @covers util\Monetary::moneyDb()
+    */
+    public function testMoneyDbNegative() {
+        $this->assertEquals( '-0.01'     , (new Monetary('-1'))->moneyDb() );
+        $this->assertEquals( '-0.31'     , (new Monetary('-31'))->moneyDb() );
+        $this->assertEquals( '-1.99'     , (new Monetary('-199'))->moneyDb() );
+        $this->assertEquals( '-12.30'    , (new Monetary('-1230'))->moneyDb() );
+        $this->assertEquals( '-123.45'   , (new Monetary('-12345'))->moneyDb() );
+        $this->assertEquals( '-200.50'   , (new Monetary('-20050'))->moneyDb() );
+        $this->assertEquals( '-87654.32' , (new Monetary('-8765432'))->moneyDb() );
     }
 
     /**

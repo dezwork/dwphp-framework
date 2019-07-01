@@ -35,7 +35,7 @@
 			if($local!='start' && $local!='end'){$local='end';}
 			$ext = pathinfo($filename, PATHINFO_EXTENSION);
 			if($ext=='css'){
-				$this->setFilesLinks($GLOBALS['f']->fileVersion($filename),$local,($additional==''?'rel="stylesheet" type="text/css""':$additional));
+				$this->setFilesLinks($GLOBALS['f']->fileVersion($filename),$local,($additional==''?'rel="stylesheet" type="text/css"':$additional));
 			}else if($ext=='js'){
 				$this->setFilesScripts($GLOBALS['f']->fileVersion($filename),$local,($additional==''?'type="text/javascript"':$additional));
 			}else{
@@ -85,8 +85,8 @@
 			}
 			if(isset($this->filesScripts['end']) && is_array($this->filesScripts['end'])){
 				// unique keys in array
-				$tmp=$this->filesLinks['end'];
-				foreach ($this->filesLinks['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				$tmp=$this->filesScripts['end'];
+				foreach ($this->filesScripts['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			return $this->filesScripts;
 		}
