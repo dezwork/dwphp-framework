@@ -636,131 +636,119 @@ class Init{
 		fclose($fp);
 	}
 
-	/* CONTROLS PAGES APPLICATION */
-	//retur folder about aplicatoins
-	private function getApplicationPathFiles(){
-		$this->setPathURI(explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI'])));
-		$a = $this->getPathURI();
-
-		if($this->getEnvironmentStatus()=='development'){
-			$nun_level = explode("/", $this->getAddressUri());
-
-			for ($i = 0; $i < count($nun_level)-2; $i++) {
-				array_shift($a);
-			}
-
-			$this->setPathURI($a);
-		}
-
-		foreach ($a as $key => $value) {
-			if($this->getNameApplication() == $value){
-				unset($a[$key]);
-			}
-		}
-
-		if(reset($a) == 'helpers'){
-			array_shift($a);
-			$this->setHelpers(true);
-		}else{
-			$this->setHelpers(false);
-		}
-
-		$this->setPathURI($a);
-		foreach ($a as $key => $value) {
-			$this->posURL[]=$value;
-		}
-
-		$url_array = $this->getPathURI();
-		$directory_action= $directory_ctrl = $directory_view = '';
-
-		if($this->getHelpers() == true){
-			$directory_action = $this->getPathApplication().'helpers';
-			do{
-				if( in_array(current($url_array), scandir($directory_action))){
-					$directory_action.='/'.current($url_array);
-					next($url_array);
-					$dir = false;
-
-				}else if( in_array(current($url_array).'.php', scandir($directory_action))){
-					$directory_action.='/'.current($url_array).'.php';
-					next($url_array);
-					if(isset($url_array[key($url_array)])){
-						$this->setMethodsURI($url_array[key($url_array)]);
-					}
-					$dir = true;
-				}else{
-					$directory_action.='/index.php';
-					$dir = true;
-				}
-			}while(!$dir);
-		}else{
-			$directory_ctrl = $this->getPathApplication().'controllers';
-			$directory_view = $this->getPathApplication().'views/pages/default';
-			$this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
-			do{
-				if( (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && is_dir($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
-					$directory_ctrl.='/'.current($url_array);
-					$directory_view.='/'.current($url_array);
-					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
-					next($url_array);
-					$dir = false;
-					if(isset($url_array[key($url_array)])){
-						$this->setMethodsURI($url_array[key($url_array)]);
-					}
-				}else if( (file_exists($directory_ctrl) && is_dir($directory_ctrl) &&  in_array(current($url_array).'.php', scandir($directory_ctrl))) || (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array).'.php', scandir($directory_view)))){
-					$directory_ctrl.='/'.current($url_array).'.php';
-					$directory_view.='/'.current($url_array).'.php';
-					$this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
-					next($url_array);
-					if(isset($url_array[key($url_array)])){
-						$this->setMethodsURI($url_array[key($url_array)]);
-					}
-					$dir = true;
-				}else{
-					if(isset($url_array[key($url_array)])){
-						$this->setMethodsURI($url_array[key($url_array)]);
-					}
-
-					if((count($url_array)==0 || is_int(key($url_array)) == false) || (isset($url_array) && $url_array[0]=='')){
-						$directory_ctrl.='/index.php';
-						$directory_view.='/index.php';
-						$this->urlCompletePath.='/';
-					}
-					$dir = true;
-				}
-
-			}while(!$dir);
-		}
-
-		//verifica se existe a view
-		if($this->getHelpers() == true && file_exists($directory_action) && is_file($directory_action) ){
-			// inicia actoin
-			$this->setPageAction($directory_action);
-			if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) {	
-				$this->instanceTemplate($this->getPageAction());
-			}else{
-				http_response_code(505);
-				$this->setHelpers(false);
-				$this->setPageView($this->getPathApplication('views/error/','404.php'));
-			}
-		}else if((file_exists($directory_ctrl) && is_file($directory_ctrl)) || (file_exists($directory_view) && is_file($directory_view))){
-			// inicia controller
-			$this->setPageCtrl($directory_ctrl);
-			$this->setPageView($directory_view);
-		}
-
-		if(!file_exists($directory_ctrl) || !is_file($directory_ctrl)){
-			$this->setPageCtrl($this->getPathApplication('controllers/error/','404.php'));
-		}
-
-		if(!file_exists($directory_view) || !is_file($directory_view)){
-			$this->setPageView($this->getPathApplication('views/error/','404.php'));
-		}
-
-		if($this->getHelpers()==false){
-			$this->instanceTemplate($this->getPathApplication('views/layout/','template.php'));
-		}
-	}
+	/* ROUTERS PAGES APPLICATION */
+	//return folder about aplicatoins
+    private function getApplicationPathFiles(){
+        $this->setPathURI(explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI'])));
+        $a = $this->getPathURI();
+        if($this->getEnvironmentStatus()=='development'){
+            $nun_level = explode("/", $this->getAddressUri());
+            for ($i = 0; $i < count($nun_level)-2; $i++) {
+                array_shift($a);
+            }
+            $this->setPathURI($a);
+        }
+        foreach ($a as $key => $value) {
+            if($this->getNameApplication() == $value){
+                unset($a[$key]);
+            }
+        }
+        if(reset($a) == 'helpers'){
+            array_shift($a);
+            $this->setHelpers(true);
+        }else{
+            $this->setHelpers(false);
+        }
+        $this->setPathURI($a);
+        foreach ($a as $key => $value) {
+            $this->posURL[]=$value;
+        }
+        $url_array = $this->getPathURI();
+        $directory_action= $directory_ctrl = $directory_view = '';
+        if($this->getHelpers() == true){
+            $directory_action = $this->getPathApplication().'helpers';
+            do{
+                if( in_array(current($url_array), scandir($directory_action))){
+                    $directory_action.='/'.current($url_array);
+                    next($url_array);
+                    $dir = false;
+                }else if( in_array(current($url_array).'.php', scandir($directory_action))){
+                    $directory_action.='/'.current($url_array).'.php';
+                    next($url_array);
+                    if(isset($url_array[key($url_array)])){
+                        $this->setMethodsURI($url_array[key($url_array)]);
+                    }
+                    $dir = true;
+                }else{
+                    $directory_action.='/index.php';
+                    $dir = true;
+                }
+            }while(!$dir);
+        }else{
+            $directory_ctrl = $this->getPathApplication().'controllers';
+            $directory_view = $this->getPathApplication().'views/pages/default';
+            $this->urlCompletePath = substr($this->getPathBaseHref(),0,-1);
+            do{
+                if( (file_exists($directory_view) && is_dir($directory_view) && !is_file($directory_view.'/'.current($url_array)) && in_array(current($url_array), scandir($directory_view))) || (file_exists($directory_ctrl) && is_dir($directory_ctrl) && in_array(current($url_array), scandir($directory_ctrl))) ){
+                    $directory_ctrl.='/'.current($url_array);
+                    $directory_view.='/'.current($url_array);
+                    $this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
+                    next($url_array);
+                    $dir = false;
+                    if(isset($url_array[key($url_array)])){
+                        $this->setMethodsURI($url_array[key($url_array)]);
+                    }
+                }else if( (file_exists($directory_ctrl) && is_dir($directory_ctrl) &&  in_array(current($url_array).'.php', scandir($directory_ctrl))) || (file_exists($directory_view) && is_dir($directory_view) && in_array(current($url_array).'.php', scandir($directory_view)))){
+                    $directory_ctrl.='/'.current($url_array).'.php';
+                    $directory_view.='/'.current($url_array).'.php';
+                    $this->urlCompletePath.='/'.(current($url_array)!='index'?current($url_array):'');
+                    next($url_array);
+                    if(isset($url_array[key($url_array)])){
+                        $this->setMethodsURI($url_array[key($url_array)]);
+                    }
+                    $dir = true;
+                }else{
+                    if(isset($url_array[key($url_array)])){
+                        $this->setMethodsURI($url_array[key($url_array)]);
+                    }
+                    if(file_exists($directory_ctrl.'.php') || file_exists($directory_view.'.php')){
+                        $directory_ctrl.='.php';
+                        $directory_view.='.php';
+                    }else if((count($url_array)==0 || is_int(key($url_array)) == false) || (isset($url_array) && $url_array[0]=='')){
+                        $directory_ctrl.='/index.php';
+                        $directory_view.='/index.php';
+                        $this->urlCompletePath.='/';
+                    }
+                    $dir = true;
+                }
+            }while(!$dir);
+        }
+        //verifica se existe a view
+        if($this->getHelpers() == true && file_exists($directory_action) && is_file($directory_action) ){
+            // inicia actoin
+            $this->setPageAction($directory_action);
+            if (strpos($_SERVER['HTTP_ACCEPT'], 'htm') === false) { 
+                $this->instanceTemplate($this->getPageAction());
+            }else{
+                http_response_code(505);
+                $this->setHelpers(false);
+                $this->setPageView($this->getPathApplication('views/error/','404.php'));
+            }
+        }else if((file_exists($directory_ctrl) && is_file($directory_ctrl)) || (file_exists($directory_view) && is_file($directory_view))){
+            // inicia controller
+            $this->setPageCtrl($directory_ctrl);
+            $this->setPageView($directory_view);
+        }
+        if(!file_exists($directory_ctrl) || !is_file($directory_ctrl)){
+            $this->setPageCtrl($this->getPathApplication('controllers/error/','404.php'));
+        }
+        if(!file_exists($directory_view) || !is_file($directory_view)){
+            $this->setPageView($this->getPathApplication('views/error/','404.php'));
+        }
+        if($this->getHelpers()==false){
+            $this->instanceTemplate($this->getPathApplication('views/layout/','template.php'));
+        }
+    }
 
 	/* GET PATH */
 	public function insertLoadPageLog($timer= '', $page=''){
