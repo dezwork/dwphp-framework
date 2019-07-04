@@ -203,7 +203,7 @@ class head{
             $ret .= '<meta name="revisit-after" content="'.$this->getMetaRevisitAfter().'" />'."\n";
 
         if($this->getMetaRating()!='')
-            $ret .= '<meta name="revisit-after" content="'.$this->getMetaRating().'" />'."\n";
+            $ret .= '<meta name="rating" content="'.$this->getMetaRating().'" />'."\n";
 
         if($this->getMetaTitle()!='')
             $ret .= '<meta name="DC.title" content="'.$this->getMetaTitle().'" />'."\n";
