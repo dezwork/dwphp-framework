@@ -755,7 +755,9 @@ class Init{
 		if($this->getLimitDataLoadPage()!=0){
 			$text='';
 			$addLine=true;
+			$action = 'x+';
 			if(file_exists(PATH_ROOT."/storage/log/loadpage.log")){
+				$action = 'w+';
 				$f=fopen(PATH_ROOT."/storage/log/loadpage.log","r+");
 				while (!feof($f)) {
 					//pega conteudo da linha
@@ -790,7 +792,7 @@ class Init{
 				fclose($f);
 			}
 
-			$f2 = fopen(PATH_ROOT."/storage/log/loadpage.log","w+");
+			$f2 = fopen(PATH_ROOT."/storage/log/loadpage.log", $action);
 
 			if($addLine==true){
 				$text.=$page.'|'.$timer.";\n";
