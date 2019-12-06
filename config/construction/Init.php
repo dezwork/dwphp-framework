@@ -753,8 +753,10 @@ class Init{
 	public function insertLoadPageLog($timer= '', $page=''){
 		if($this->getLimitDataLoadPage()!=0){
 			$text='';
+			$action='x+';
 			$addLine=true;
 			if(file_exists(PATH_ROOT."/dwphp/storage/log/loadpage.log")){
+				$action='w+';
 				$f=fopen(PATH_ROOT."/dwphp/storage/log/loadpage.log","r+");
 				while (!feof($f)) {
 					//pega conteudo da linha
@@ -788,7 +790,7 @@ class Init{
 				fclose($f);
 			}
 
-			$f2=fopen(PATH_ROOT."/storage/log/loadpage.log","w+");
+			$f2=fopen(PATH_ROOT."/storage/log/loadpage.log",$action);
 			if($addLine==true){
 				$text.=$page.'|'.$timer.";\n";
 			}
