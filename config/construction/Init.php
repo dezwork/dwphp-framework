@@ -755,9 +755,9 @@ class Init{
 			$text='';
 			$action='x+';
 			$addLine=true;
-			if(file_exists(PATH_ROOT."/dwphp/storage/log/loadpage.log")){
+			if(file_exists(PATH_ROOT."/storage/log/loadpage.log")){
 				$action='w+';
-				$f=fopen(PATH_ROOT."/dwphp/storage/log/loadpage.log","r+");
+				$f=fopen(PATH_ROOT."/storage/log/loadpage.log","r+");
 				while (!feof($f)) {
 					//pega conteudo da linha
 					$line=fgets($f);
