@@ -752,13 +752,17 @@ class Init{
 
 	/* GET PATH */
 	public function insertLoadPageLog($timer= '', $page=''){
+		$filename = PATH_ROOT."/storage/log/loadpage.log";
 		if($this->getLimitDataLoadPage()!=0){
+			$dirname = dirname($filename);
+			if (!is_dir($dirname)){
+			    mkdir($dirname, 0755, true);
+			}
+
 			$text='';
 			$addLine=true;
-			$action = 'x+';
-			if(file_exists(PATH_ROOT."/storage/log/loadpage.log")){
-				$action = 'w+';
-				$f=fopen(PATH_ROOT."/storage/log/loadpage.log","r+");
+			if(file_exists()){
+				$f=fopen($filename,"a+");
 				while (!feof($f)) {
 					//pega conteudo da linha
 					$line=fgets($f);
@@ -788,16 +792,13 @@ class Init{
 						}
 					}
 				}
-
 				fclose($f);
 			}
 
-			$f2 = fopen(PATH_ROOT."/storage/log/loadpage.log", $action);
-
+			$f2=fopen($filename,"a+");
 			if($addLine==true){
 				$text.=$page.'|'.$timer.";\n";
 			}
-
 			fwrite($f2, $text);
 			fclose($f2);
 		}
