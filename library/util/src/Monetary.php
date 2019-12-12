@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 25-06-2018 17:17:11
- */
 namespace util;
 use Money\Currency;
 use Money\Money;

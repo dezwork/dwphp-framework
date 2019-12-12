@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 2018-03-06 17:01:31
- */
-
 namespace DwPhp\Library;
 
 

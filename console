@@ -1,12 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2017-12-31 11:09:06
- */
 
 define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework', '', dirname(__FILE__)));
 
@@ -42,7 +36,7 @@ try {
 			echo "\e[1m./vendor/dezwork/dwphp-framework/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
 		break;
 		default:
-			throw new Exception("\n \033[31m Esse comando ".$command." não existe brother!! \033[0m Tenta um './dwphp help' ;) \n");
+			throw new Exception("\n \033[31m This command ".$command." dont exist! \033[0m use ./vendor/dezwork/dwphp-framework/console' \n");
 		break;
 	}
 

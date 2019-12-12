@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleberson Bieleski
- * @Last Modified time: 2018-01-27 11:26:44
- */
-
 use Symfony\Component\Yaml\Yaml;
 //vamos configurar a chamada ao Entity Manager, o mais importante do Doctrine
 
@@ -81,15 +74,6 @@ $generator->generate($metadata, $dir);
 
 
 	$assignature="<?php
-/***********************************
-     ##               ##
-     ##               ##
-   #### ## # ## ####  ####  ####
-  ## ## ####### ## ## ## ## ## ##
-   ####  # # #  ####  ## ## ####
-                ##          ##
-                ##          ##
-** Gerado em: ".date("d-m-Y H:i:s")." **/
 namespace App\Entity;
 use DwPhp\Library\models\AbstractObject;\n";
 
