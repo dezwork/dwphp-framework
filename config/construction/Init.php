@@ -752,11 +752,16 @@ class Init{
 
 	/* GET PATH */
 	public function insertLoadPageLog($timer= '', $page=''){
+		
 		$filename = PATH_ROOT."/storage/log/loadpage.log";
+
 		if($this->getLimitDataLoadPage()!=0){
 			$dirname = dirname($filename);
 			if (!is_dir($dirname)){
-				mkdir($dirname, 0755, true);
+				mkdir($dirname, 0777, true);
+			}
+			if(!file_exists($filename)) {
+				file_put_contents($filename, '');
 			}
 			$text='';
 			$addLine=true;
@@ -778,11 +783,8 @@ class Init{
 								array_shift($lines[1]);
 							}
 						}
-						$t=implode($lines[1], ";");
-						if(strlen($text)!=0){
-							$text.= "\n";
-						}
-						$text.= $page."|".$t.';'.$timer.";"."\n";
+						if(strlen($text)!=0){ $text.= "\n"; }
+						$text.= $page."|".implode($lines[1], ";").';'.$timer.";"."\n";
 					}else{
 						$text.=$line;
 					}
