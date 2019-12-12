@@ -760,7 +760,7 @@ class Init{
 
 			$text='';
 			$addLine=true;
-			if(file_exists()){
+			if(file_exists($filename)){
 				$f=fopen($filename,"a+");
 				while (!feof($f)) {
 					//pega conteudo da linha
