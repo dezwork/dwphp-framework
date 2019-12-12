@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 02-04-2018 09:04:38
- */
-
 namespace util;
 
 class HumanizeBR{

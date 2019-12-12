@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 2018-02-22 21:59:34
- */
-
 	namespace DwPhp\Library;
 	use DwPhp\Library\head as head;
 	use DwPhp\Library\pagination as pagination;

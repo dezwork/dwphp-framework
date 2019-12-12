@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 19-04-2018 21:19:32
- */
-
 namespace DwPhp;
 use Symfony\Component\Yaml\Yaml;
 use Monolog\Logger;

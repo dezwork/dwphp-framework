@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @Author: Cleberson Bieleski
- * @Date:   2017-12-23 04:54:45
- * @Last Modified by:   Cleber
- * @Last Modified time: 20-04-2018 09:36:07
- */
 	namespace DwPhp;
 	use App\Framework\controller;
 	abstract class Framework{
