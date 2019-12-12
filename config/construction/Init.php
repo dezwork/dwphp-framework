@@ -756,51 +756,44 @@ class Init{
 		if($this->getLimitDataLoadPage()!=0){
 			$dirname = dirname($filename);
 			if (!is_dir($dirname)){
-			    mkdir($dirname, 0755, true);
+				mkdir($dirname, 0755, true);
 			}
-
 			$text='';
 			$addLine=true;
-			if(file_exists($filename)){
-				$f=fopen($filename,"a+");
-				while (!feof($f)) {
-					//pega conteudo da linha
-					$line=fgets($f);
-					if($line!=''){
-						$lines=explode('|',$line);
-						if(isset($lines[0]) && $lines[0]==$page){
-							//define que o arquivo será reescrito
-							$addLine=false;
-							$text=substr($text, 0,-1);
-							//$text.=$timer.";\n";
-
-							$lines[1] = explode(';',$lines[1]);
-							array_pop($lines[1]);
-							if(count($lines[1])>$this->getLimitDataLoadPage()-1){
-								while ( count($lines[1])>(int)$this->getLimitDataLoadPage()-1) {
-									array_shift($lines[1]);
-								}
+			$f=fopen($filename,"r+");
+			while (!feof($f)) {
+				//pega conteudo da linha
+				$line=fgets($f);
+				if($line!=''){
+					$lines=explode('|',$line);
+					if(isset($lines[0]) && $lines[0]==$page){
+						//define que o arquivo será reescrito
+						$addLine=false;
+						$text=substr($text, 0,-1);
+						$lines[1] = explode(';',$lines[1]);
+						array_pop($lines[1]);
+						$count = count($lines[1]);
+						if($count>$this->getLimitDataLoadPage()-1){
+							while ( $count>(int)$this->getLimitDataLoadPage()-1) {
+								array_shift($lines[1]);
 							}
-							$t=implode($lines[1], ";");
-							if(strlen($text)!=0){
-								$text.= "\n";
-							}
-							$text.= $page."|".$t.';'.$timer.";\n";
-							//echo $page."|".$t.$timer.";\n";
-						}else{
-							$text.=$line;
 						}
+						$t=implode($lines[1], ";");
+						if(strlen($text)!=0){
+							$text.= "\n";
+						}
+						$text.= $page."|".$t.';'.$timer.";"."\n";
+					}else{
+						$text.=$line;
 					}
 				}
-				fclose($f);
 			}
-
-			$f2=fopen($filename,"a+");
+			rewind($f);
 			if($addLine==true){
-				$text.=$page.'|'.$timer.";\n";
+				$text.=$page.'|'.$timer.";"."\n";
 			}
-			fwrite($f2, $text);
-			fclose($f2);
+			fwrite($f, $text);
+			fclose($f);
 		}
 	}
 
