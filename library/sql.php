@@ -82,7 +82,7 @@ namespace DwPhp\Library;
 			$s=$GLOBALS['CONN']->Execute($sql);
 			if($s===false){
 				$erro=$GLOBALS['CONN']->ErrorMsg();
-				$GLOBALS['f']->writeErrorSQL("[".date('d/m/Y H:m:i')."] - ".$erro);
+				$GLOBALS['f']->writeErrorSQL("[".date('d/m/Y H:m:i')."] - ".$erro.' '.$sql);
 				//armazenda erro em $lastQuery
 				$this->setLastError($erro);
 				//armazenda erro na lista de erro $allError do tipo ARRAY
