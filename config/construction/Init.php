@@ -268,9 +268,10 @@ class Init{
         }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
         	$dir_path = 'dev';
         	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
-        		unlink(file_exists(PATH_ROOT.'/app/dev/'));
+        		$this->deleteDir(PATH_ROOT.'/app/dev/');
         	}
         }
+
 
     	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
     		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
@@ -343,6 +344,24 @@ class Init{
 		}
 
 		$this->setConnectionDb($app_config);
+	}
+
+	public function deleteDir($dirPath) {
+	    if (! is_dir($dirPath)) {
+	        throw new InvalidArgumentException("$dirPath must be a directory");
+	    }
+	    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+	        $dirPath .= '/';
+	    }
+	    $files = glob($dirPath . '*', GLOB_MARK);
+	    foreach ($files as $file) {
+	        if (is_dir($file)) {
+	            $this->deleteDir($file);
+	        } else {
+	            unlink($file);
+	        }
+	    }
+	    rmdir($dirPath);
 	}
 
 	// realiza as configurações do sistema
