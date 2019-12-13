@@ -5,6 +5,7 @@
     "homepage": "https://github.com/dezwork/dwphp-framework",
     "type": "library",
     "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Dezwork Digital",
