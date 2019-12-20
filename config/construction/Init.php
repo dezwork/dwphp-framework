@@ -579,12 +579,12 @@ class Init{
 		}
 
         if($this->getUseHttps()=='On' || (preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='Off') || (!preg_match('/^www/', $this->getAddressUri()) && $this->getUseWww()=='On') || $k!=''){
-            if(
-            	( (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!='https') || ((isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "on"))) || 
+           if(
+            	((!isset($_SERVER['HTTPS']) && !isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) || (isset($_SERVER['HTTPS']) && $_SERVER["HTTPS"] != "on") || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!="https")) ||
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
-               header( 'Location: '.$this->getPathBaseHref(). substr($_SERVER['REQUEST_URI'], 1) ); exit;
+               header('Location: '.($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri()); exit;
             }
         }
 
