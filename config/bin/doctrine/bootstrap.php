@@ -10,7 +10,7 @@ require_once PATH_ROOT."/vendor/autoload.php";
 
 // Create a simple "default" Doctrine ORM configuration for Annotations
 $isDevMode = true;
-$config = Setup::createAnnotationMetadataConfiguration(array(PATH_ROOT."/app/dev/entity/"), $isDevMode);
+$config = Setup::createAnnotationMetadataConfiguration(array(PATH_ROOT."/app/entity/"), $isDevMode);
 
 // database configuration parameters
 

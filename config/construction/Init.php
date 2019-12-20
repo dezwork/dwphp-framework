@@ -154,10 +154,10 @@ class Init{
 		}
 
 		//verify and define applicatoin disponible for project in addition to default.
-		if(isset($conf['application_src']) && !is_array($conf['application_src'])){
-			throw new \Exception("config.yml Você precisa definir um array de 'application_src'. Ex: default: /app/default/");
+		if(!isset($conf['application_src']) || (isset($conf['application_src']) && !is_array($conf['application_src']))){
+			throw new \Exception("config.yml 'application_src' is not defined Ex: default: /app/");
 		}else if(array_key_exists('default', $conf['application_src'])==''){
-			throw new \Exception("config.yml Você precisa uma aplicação como default. Ex: default: /app/default/");
+			throw new \Exception("application not defined in config.yml. Use default: default: /app/");
 		}else{
 			$this->setApplication($conf['application_src']);
 		}
@@ -263,24 +263,7 @@ class Init{
 		    }
 		}
 
-		if($this->getEnvironmentStatus()=='production' || $this->getEnvironmentStatus()=='staging' || $this->getEnvironmentStatus() == 'sandbox'){
-        	$dir_path = 'prod';
-        }else if($this->getEnvironmentStatus()=='testing' || $this->getEnvironmentStatus()=='development'){
-        	$dir_path = 'dev';
-        	if(file_exists(PATH_ROOT.'/app/dev/') && file_exists(PATH_ROOT.'/app/prod/')){
-        		$this->deleteDir(PATH_ROOT.'/app/dev/');
-        	}
-        }
-
-
-    	if(!file_exists(PATH_ROOT.'/app/'.$dir_path)){
-    		if($this->getEnvironmentStatus()!='development' && $this->getEnvironmentStatus()!='testing' && file_exists(PATH_ROOT.'/app/dev/')){
-    			rename(PATH_ROOT.'/app/dev/', PATH_ROOT.'/app/'.$dir_path );
-    		}else if($this->getEnvironmentStatus()!='production' && $this->getEnvironmentStatus()!='staging' && $this->getEnvironmentStatus() != 'sandbox' && file_exists(PATH_ROOT.'/app/prod/')){
-    			rename(PATH_ROOT.'/app/prod/', PATH_ROOT.'/app/'.$dir_path );
-    		}
-    	}
-        $this->setApplicationPath('/app/'.$dir_path.'/'.$this->getApplicationName());
+        $this->setApplicationPath('/app/'.$this->getApplicationName());
 
 
 		//Get address_uri of file app_config.yml
@@ -344,26 +327,6 @@ class Init{
 		}
 
 		$this->setConnectionDb($app_config);
-	}
-
-	public function deleteDir($dirPath) {
-	    if (is_dir($dirPath)) {
-		    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
-		        $dirPath .= '/';
-		    }
-		    $files = glob($dirPath . '*', GLOB_MARK);
-		    foreach ($files as $file) {
-		        if (is_dir($file)) {
-		            $this->deleteDir($file);
-		        } else {
-		            unlink($file);
-		        }
-		    }
-		    rmdir($dirPath);
-			return true;
-		}else{
-			return false;
-		}
 	}
 
 	// realiza as configurações do sistema
@@ -630,14 +593,13 @@ class Init{
 
 		if(!isset($app_path)){
 			$app_path   = $this->getApplication();
-			$app_public = $app_path['default']['path_public'];
-			$app_path   = $app_path['default']['path_app'];
+			$app_public = '/public/default';
+			$app_path   = 'default';
 			$this->setNameApplication('default');
 		}
-
 		$this->setApplicationName($app_path);
 		if(!file_exists(PATH_ROOT.$app_public)){
-			throw new \Exception("app_public não foi encontrado em: ".PATH_ROOT.$app_public);
+			throw new \Exception('app_public not found in '.PATH_ROOT.$app_public);
 		}else{
 			$this->setPublicPath($app_public);
 		}
@@ -760,6 +722,7 @@ class Init{
             $this->setPageCtrl($directory_ctrl);
             $this->setPageView($directory_view);
         }
+
         if(!file_exists($directory_ctrl) || !is_file($directory_ctrl)){
             $this->setPageCtrl($this->getPathApplication('controllers/error/','404.php'));
         }
@@ -829,19 +792,41 @@ class Init{
 			$file;
 	}
 
+	public function fileVersion($localFile=''){
+		// retorna string
+		$dir=$this->getPublicPath();
+		if(strpos($localFile,"/public/") === false){
+			$p = explode('/',$this->getPublicPath());
+			unset($p[1]);
+			$p = implode('/',$p);
+		}else{
+			$dir = '';
+		}
+
+		if(file_exists(PATH_ROOT.$dir.$localFile) && $localFile!=''){
+		    return substr($this->getPathBaseHref(),0,-1).(isset($p) && $p=='/default'?$p:'').$localFile.'?'.md5(filemtime(PATH_ROOT.$dir.$localFile)); exit;
+		}else{
+		    return $localFile;
+		}
+	}
+
 	/* GET PATH */
 	private function instanceTemplate($pathFile){
 		if(file_exists($pathFile)){
 			require_once $pathFile;
 			if(class_exists('App\\template', true)){
+				
 				$n='App\template';
 				$this->template = new $n($this);
 				
 				if(file_exists($this->getpageCtrl())){
 					require_once $this->getpageCtrl();
 					if(class_exists('\App\Framework\controller', false)){
+
 						$this->controller = new \App\Framework\controller($this);
+
 						if($this->getMethodsURI()!=''){
+
 							if(method_exists($this->controller,$this->getMethodsURI())){
 								$methodsAction=$this->getMethodsURI();
 								$this->controller->$methodsAction();
@@ -881,8 +866,6 @@ class Init{
 				$this->action = new $n($this);
 				if($this->getMethodsURI()!=''){
 					$GLOBALS['f'] = $this;
-					header('Cache-Control: no-cache, must-revalidate');
-					header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 					header('Content-type: application/json');
 					
 					if(method_exists($this->action,$this->getMethodsURI())){
@@ -900,24 +883,7 @@ class Init{
 		}
 	}
 
-	public function fileVersion($localFile=''){
-		// retorna string
-		$dir=$this->getPublicPath();
-		if(strpos($localFile,"/public/") === false){
-			$p = explode('/',$this->getPublicPath());
-			unset($p[1]);
-			$p = implode('/',$p);
-		}else{
-			$dir = '';
-		}
-
-		if(file_exists(PATH_ROOT.$dir.$localFile) && $localFile!=''){
-		    return substr($this->getPathBaseHref(),0,-1).(isset($p) && $p=='/default'?$p:'').$localFile.'?'.md5(filemtime(PATH_ROOT.$dir.$localFile)); exit;
-		}else{
-		    return $localFile;
-		}
-	}
-
+	
 	/**
 	 * GETTERS AND SETTERES
 	 */
