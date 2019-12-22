@@ -4,7 +4,7 @@ Framework php7 with environment development, testing, staging and production.
 
 ## Goals
 
-*  various environments (dev, testing, staging, prod)
+*  many environments (dev, testing, staging, prod)
 *  performance log (load page)
 *  automatic routes url
 *  configuration via YML file
