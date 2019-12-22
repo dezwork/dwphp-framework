@@ -36,7 +36,7 @@ try {
 			echo "\e[1m./vendor/dezwork/dwphp-framework/console doctrine orm:schema-tool:update --complete --force \e[0m : Atualiza o banco conforme as classes\n";
 		break;
 		default:
-			throw new Exception("\n \033[31m This command ".$command." dont exist! \033[0m use ./vendor/dezwork/dwphp-framework/console' \n");
+			throw new Exception("\n \033[31m This command ".$command." dont exist! \033[0m use ./vendor/dezwork/dwphp-framework/console help' \n");
 		break;
 	}
 

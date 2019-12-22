@@ -10,7 +10,7 @@ if(!defined('PATH_ROOT')){
 	define('PATH_ROOT', str_replace('/vendor/dezwork/dwphp-framework/config/bin/doctrine','',dirname(__FILE__)) );
 }
 
-$dir = PATH_ROOT."/app/dev/entity/";
+$dir = PATH_ROOT."/app/entity/";
 
 require_once PATH_ROOT."/vendor/autoload.php";
 
