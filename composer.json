@@ -30,6 +30,7 @@
     "autoload": {
         "psr-4": {
             "DwPhp\\": "config/construction/",
+            "DwPhp\\Library\\": "library/",
             "App\\Entity\\": "app/entity/",
             "App\\Library\\":  [
                 "library/", "library/src/", "library/tests/"
