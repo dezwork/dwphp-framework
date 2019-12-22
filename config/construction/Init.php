@@ -734,8 +734,8 @@ class Init{
         }
     }
 
-	/* GET PATH */
-	public function insertLoadPageLog($timer= '', $page=''){
+	/* INSERT TIMELOAD IN LOG */
+	public function insertLoadPageLog($timer='', $page=''){
 		
 		$filename = PATH_ROOT."/storage/log/loadpage.log";
 		if($this->getLimitDataLoadPage()!=0){
@@ -774,6 +774,7 @@ class Init{
 				}
 			}
 			rewind($f);
+			ftruncate($f, 0);
 			if($addLine==true){
 				$text.=$page.'|'.$timer.";"."\n";
 			}
