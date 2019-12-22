@@ -738,7 +738,6 @@ class Init{
 	public function insertLoadPageLog($timer= '', $page=''){
 		
 		$filename = PATH_ROOT."/storage/log/loadpage.log";
-
 		if($this->getLimitDataLoadPage()!=0){
 			$dirname = dirname($filename);
 			if (!is_dir($dirname)){
@@ -761,9 +760,9 @@ class Init{
 						$text=substr($text, 0,-1);
 						$lines[1] = explode(';',$lines[1]);
 						array_pop($lines[1]);
-						$count = count($lines[1]);
-						if($count>$this->getLimitDataLoadPage()-1){
-							while ( $count>(int)$this->getLimitDataLoadPage()-1) {
+						$limitData = $this->getLimitDataLoadPage()-1;
+						if(count($lines[1])>=$limitData){
+							while ( count($lines[1])>$limitData) {
 								array_shift($lines[1]);
 							}
 						}
