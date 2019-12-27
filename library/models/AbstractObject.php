@@ -15,7 +15,7 @@
 		public function setCreateMethods($params = []) {
 			foreach ($params as $property => $value) {
 				if (is_int($property)) { continue; }
-				$method = 'set' . ucfirst(strtolower($property));
+				$method = 'set' . ucfirst(strtolower(str_replace('_', '', $property)));
 				if (method_exists($this, $method)) {
 					$this->$method($value);
 				}
