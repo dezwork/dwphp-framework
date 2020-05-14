@@ -547,12 +547,12 @@ class Init{
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 && $this->getUseWww()=='Off') || 
             	(preg_match('/^www/', $_SERVER["HTTP_HOST"])===0 && $this->getUseWww()=='On')
             ){
-               header('Location: '.($this->getUseHttps()=='On'?'https://':'http://').($this->getUseWww()=='On'?'www.':'').$this->getAddressUri()); exit;
+				$www = (preg_match('/^www/', $_SERVER["HTTP_HOST"])===1 ? '': ($this->getUseWww()=='On'?'www.':''));
+				header('Location: '.($this->getUseHttps()=='On'?'https://':'http://').$www.$this->getAddressUri()); exit;
             }
         }
-
-
 	}
+
 	// Set applications of system
 	public function setApplication($a='',$l=''){
 		if(is_string($a)){
