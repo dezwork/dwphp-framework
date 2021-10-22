@@ -1,4 +1,4 @@
-# dwphp-framework
+# dwphp-framework - v2.2
 
 Framework php7 with environment dev, testing, staging and prod.
 

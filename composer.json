@@ -1,0 +1,47 @@
+{
+    "name": "dezwork/dwphp-framework",
+    "description": "Framework php7 with environment development, testing, staging and production.",
+    "keywords": ["Framework", "php", "Framework php7", "dwphp", "dwphp-framework"],
+    "homepage": "https://github.com/dezwork/dwphp-framework",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Dezwork Digital",
+            "email": "dezwork.digital@gmail.com"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": ">=7.0",
+        "adodb/adodb-php": "5.*",
+        "moneyphp/money": "3.*",
+        "monolog/monolog": "1.*",
+        "symfony/yaml": "3.*"
+    },
+    "require-dev": {
+        "mockery/mockery": "*",
+        "phpunit/phpunit": "6.*",
+        "doctrine/orm": "v2.5.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "DwPhp\\": "config/construction/",
+            "DwPhp\\Library\\": "library/",
+            "App\\Entity\\": "app/entity/",
+            "App\\Library\\":  [
+                "library/", "library/src/", "library/tests/"
+            ],
+            "App\\Models\\": [
+                "app/models/src/", "app/models/tests/"
+            ],
+    	    "util\\": [
+                "library/util/src/",
+                "library/util/tests/"
+            ]
+        }
+    }
+}
