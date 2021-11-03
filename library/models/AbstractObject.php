@@ -121,7 +121,7 @@
 					$StLog->setIdUser($idUser);
 					$StLog->setTimeModification($timeModification);
 					$StLog->setTableName($this->dbTable);
-					$StLog->setNextValue(json_encode(addslashes($params)));
+					$StLog->setNextValue(json_encode(str_replace("'", "\'",$params)));
 					$StLog->insert();
 				}
 			}
@@ -161,7 +161,7 @@
 					$StLog->setIdUser($idUser);
 					$StLog->setTableName($this->dbTable);
 					$StLog->setTimeModification($timeModification);
-					$StLog->setNextValue(json_encode(addslashes($params)));
+					$StLog->setNextValue(json_encode(str_replace("'", "\'",$params)));
 					$StLog->insert();
 				}
 			}
