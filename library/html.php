@@ -45,12 +45,12 @@
 			if(isset($this->filesLinks['start']) && is_array($this->filesLinks['start'])){
 				// unique keys in array
 				$tmp=$this->filesLinks['start'];
-				foreach ($this->filesLinks['start'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				foreach ($this->filesLinks['start'] as $key => $value) { if(is_array($tmp[$key]) && count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			if(isset($this->filesLinks['end']) && is_array($this->filesLinks['end'])){
 				// unique keys in array
 				$tmp=$this->filesLinks['end'];
-				foreach ($this->filesLinks['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				foreach ($this->filesLinks['end'] as $key => $value) { if(is_array($tmp[$key]) && count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			return $this->filesLinks;
 		}
@@ -74,12 +74,12 @@
 			if(isset($this->filesScripts['start']) && is_array($this->filesScripts['start'])){
 				// unique keys in array
 				$tmp=$this->filesLinks['start'];
-				foreach ($this->filesLinks['start'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				foreach ($this->filesLinks['start'] as $key => $value) { if(is_array($tmp[$key]) && count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			if(isset($this->filesScripts['end']) && is_array($this->filesScripts['end'])){
 				// unique keys in array
 				$tmp=$this->filesScripts['end'];
-				foreach ($this->filesScripts['end'] as $key => $value) { if(count($tmp[$key])>1){ unset($tmp[$key]); } }
+				foreach ($this->filesScripts['end'] as $key => $value) { if(is_array($tmp[$key]) && count($tmp[$key])>1){ unset($tmp[$key]); } }
 			}
 			return $this->filesScripts;
 		}
