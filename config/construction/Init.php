@@ -627,7 +627,7 @@ class Init
 
 		foreach ($tmp as $key => $value) {
 			if (isset($tmp[$key]) && is_array($this->getApplication()) && array_key_exists($tmp[$key], $this->getApplication())) {
-				for ($i = 0; $i < $key; $i++) {
+				for($i = 0; $i < $key; $i++) {
 					array_shift($tmp);
 				}
 
@@ -636,10 +636,6 @@ class Init
 				$app_path   = $app_path[$tmp[0]]['path_app'];
 				$this->setNameApplication($tmp[0]);
 			}
-		}
-
-		for ($i = 0; $i < count($key); $i++) {
-			array_shift($tmp);
 		}
 
 		if (!isset($app_path)) {
@@ -862,9 +858,8 @@ class Init
 		} else {
 			$dir = '';
 		}
-
 		if (file_exists(PATH_ROOT . $dir . $localFile) && $localFile != '') {
-			return substr($this->getPathBaseHref(), 0, -1) . (isset($p) && $p == '/default' ? $p : '') . $localFile . '?' . md5(filemtime(PATH_ROOT . $dir . $localFile));
+			return substr($this->getPathBaseHref(), 0, -1) . (isset($p) ? $p : '') . $localFile . '?' . md5(filemtime(PATH_ROOT . $dir . $localFile));
 			exit;
 		} else {
 			return $localFile;
