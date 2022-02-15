@@ -80,6 +80,8 @@ class Init
 	private $useWww 			=	'On';
 	// endereço web sem http e sem www
 	public $addressUri 			=	'';
+	// endereço web sem http e sem www, para busca de arquivos
+	public $usePath 			=	'';
 	// endereço web sem http e sem www
 	public $pathBaseHref 		=	'';
 	// armazenará as posições da url amigavel: getPosUrl($num), retornará o resultado contando além do path Application
@@ -316,7 +318,12 @@ class Init
 			$c['address_uri'] .= '/';
 		}
 
+		if(!isset($c['use_path'])){
+			$c['use_path'] = $c['address_uri'];
+		}
+		
 		$this->setAddressUri($c['address_uri']);
+		$this->setUsePath($c['use_path']);
 		$this->setUseHttps($c['use_https']);
 
 		if ($c['use_www'] != 'On') {
@@ -573,8 +580,7 @@ class Init
 			throw new \Exception("setSystemConfigsCurrentApplication() Valor de address_uri deve conter a url da aplicação sem http e sem www. ex: google.com");
 		}
 		//define url padrão da aplicação
-		$this->setPathBaseHref(($this->getUseHttps() == 'On' ? 'https://' : 'http://') . ($this->getUseWww() == 'On' ? 'www.' : '') . str_replace('www.', '', $this->getAddressUri()));
-
+		$this->setPathBaseHref(($this->getUseHttps() == 'On' ? 'https://' : 'http://') . ($this->getUseWww() == 'On' ? 'www.' : '') . str_replace('www.', '', $this->getUsePath()));
 		$tmp = explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI']));
 
 		$k = array_search('public', $tmp);
@@ -668,7 +674,7 @@ class Init
 	}
 
 	/* ROUTERS PAGES APPLICATION */
-	//return folder about aplicatoins
+	//return folder about applications
 	private function getApplicationPathFiles()
 	{
 		$this->setPathURI(explode('/', preg_replace('/^[\/]*(.*?)[\/]*$/', '\\1', $_SERVER['REQUEST_URI'])));
@@ -1271,13 +1277,25 @@ class Init
 	}
 
 	public function getAddressUri()
-	{;
+	{
 		return $this->addressUri;
 	}
 
 	public function setAddressUri($addressUri)
 	{
 		$this->addressUri = $addressUri;
+
+		return $this;
+	}
+
+	public function getUsePath()
+	{
+		return $this->usePath;
+	}
+
+	public function setUsePath($usePath)
+	{
+		$this->usePath = $usePath;
 
 		return $this;
 	}
